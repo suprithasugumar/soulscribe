@@ -68,7 +68,7 @@ const Home = () => {
         <div className="container mx-auto px-4 py-8">
           <header className="flex justify-between items-center mb-8">
             <h1 className="text-4xl font-playfair font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              MindScape
+              SoulScribe
             </h1>
             <div className="flex gap-2">
               <Button

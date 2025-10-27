@@ -51,7 +51,7 @@ const Auth = () => {
       <Card className="w-full max-w-md shadow-medium backdrop-blur-sm bg-card/80">
         <CardHeader className="text-center">
           <CardTitle className="text-4xl font-playfair bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            MindScape
+            SoulScribe
           </CardTitle>
           <CardDescription className="text-base font-inter">
             {isLogin ? "Welcome back to your mindful space" : "Begin your journey of self-reflection"}
