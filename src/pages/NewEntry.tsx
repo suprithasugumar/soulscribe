@@ -5,12 +5,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Save, Image as ImageIcon } from "lucide-react";
+import { ArrowLeft, Save } from "lucide-react";
 import { toast } from "sonner";
 import { AuthGuard } from "@/components/AuthGuard";
 import { MoodSelector } from "@/components/MoodSelector";
 import { EmotionTags } from "@/components/EmotionTags";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
+import { MediaUploader } from "@/components/MediaUploader";
+import { TextEnhancer } from "@/components/TextEnhancer";
+import { DoodleGenerator } from "@/components/DoodleGenerator";
 
 const NewEntry = () => {
   const navigate = useNavigate();
@@ -20,6 +23,7 @@ const NewEntry = () => {
   const [emotionTags, setEmotionTags] = useState<string[]>([]);
   const [dailyPrompt, setDailyPrompt] = useState("");
   const [saving, setSaving] = useState(false);
+  const [mediaUrls, setMediaUrls] = useState<string[]>([]);
 
   useEffect(() => {
     fetchDailyPrompt();
@@ -70,6 +74,7 @@ const NewEntry = () => {
         content,
         mood: mood || null,
         emotion_tags: emotionTags,
+        media_urls: mediaUrls,
       });
 
       if (error) throw error;
@@ -130,14 +135,19 @@ const NewEntry = () => {
                   />
                 </div>
                 
-                <div className="flex gap-2 items-start">
-                  <Textarea
-                    placeholder="What's on your mind today?"
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                    className="min-h-[300px] resize-none border-none focus-visible:ring-0 px-0 font-inter"
-                  />
-                  <VoiceRecorder onTranscription={handleTranscription} />
+                <div className="space-y-2">
+                  <div className="flex gap-2 items-start">
+                    <Textarea
+                      placeholder="What's on your mind today?"
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
+                      className="min-h-[300px] resize-none border-none focus-visible:ring-0 px-0 font-inter"
+                    />
+                    <VoiceRecorder onTranscription={handleTranscription} />
+                  </div>
+                  <div className="flex gap-2 flex-wrap">
+                    <TextEnhancer text={content} onTextEnhanced={setContent} />
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -154,6 +164,13 @@ const NewEntry = () => {
                   selectedTags={emotionTags}
                   onTagToggle={handleEmotionToggle}
                 />
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-medium backdrop-blur-sm bg-card/80 border-none">
+              <CardContent className="pt-6 space-y-4">
+                <MediaUploader onMediaUploaded={setMediaUrls} currentUrls={mediaUrls} />
+                <DoodleGenerator text={content} onDoodleGenerated={(url) => setMediaUrls([...mediaUrls, url])} />
               </CardContent>
             </Card>
           </div>
