@@ -11,6 +11,7 @@ import Home from "./pages/Home";
 import NewEntry from "./pages/NewEntry";
 import AIFeatures from "./pages/AIFeatures";
 import MoodTracker from "./pages/MoodTracker";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -57,6 +58,7 @@ const App = () => {
             <Route path="/new-entry" element={<NewEntry />} />
             <Route path="/ai-features" element={<AIFeatures />} />
             <Route path="/mood-tracker" element={<MoodTracker />} />
+            <Route path="/settings" element={session ? <Settings /> : <Navigate to="/auth" />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

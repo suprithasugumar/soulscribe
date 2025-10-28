@@ -14,6 +14,8 @@ import { VoiceRecorder } from "@/components/VoiceRecorder";
 import { MediaUploader } from "@/components/MediaUploader";
 import { TextEnhancer } from "@/components/TextEnhancer";
 import { DoodleGenerator } from "@/components/DoodleGenerator";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 const NewEntry = () => {
   const navigate = useNavigate();
@@ -24,6 +26,7 @@ const NewEntry = () => {
   const [dailyPrompt, setDailyPrompt] = useState("");
   const [saving, setSaving] = useState(false);
   const [mediaUrls, setMediaUrls] = useState<string[]>([]);
+  const [isPrivate, setIsPrivate] = useState(false);
 
   useEffect(() => {
     fetchDailyPrompt();
@@ -75,6 +78,7 @@ const NewEntry = () => {
         mood: mood || null,
         emotion_tags: emotionTags,
         media_urls: mediaUrls,
+        is_private: isPrivate,
       });
 
       if (error) throw error;
@@ -159,11 +163,21 @@ const NewEntry = () => {
             </Card>
 
             <Card className="shadow-medium backdrop-blur-sm bg-card/80 border-none">
-              <CardContent className="pt-6">
+              <CardContent className="pt-6 space-y-4">
                 <EmotionTags
                   selectedTags={emotionTags}
                   onTagToggle={handleEmotionToggle}
                 />
+                <div className="flex items-center space-x-2 pt-4 border-t">
+                  <Switch
+                    id="private"
+                    checked={isPrivate}
+                    onCheckedChange={setIsPrivate}
+                  />
+                  <Label htmlFor="private" className="cursor-pointer">
+                    Mark as private 🔒
+                  </Label>
+                </div>
               </CardContent>
             </Card>
 

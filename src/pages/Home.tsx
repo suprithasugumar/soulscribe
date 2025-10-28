@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, LogOut, Sparkles, TrendingUp } from "lucide-react";
+import { Plus, LogOut, Sparkles, TrendingUp, Settings } from "lucide-react";
 import { toast } from "sonner";
 import { AuthGuard } from "@/components/AuthGuard";
 
@@ -71,6 +71,14 @@ const Home = () => {
               SoulScribe
             </h1>
             <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => navigate("/settings")}
+                className="transition-all hover:scale-105"
+              >
+                <Settings className="h-4 w-4" />
+              </Button>
               <Button
                 variant="outline"
                 size="icon"

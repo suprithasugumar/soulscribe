@@ -35,6 +35,36 @@ export type Database = {
         }
         Relationships: []
       }
+      future_messages: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_sent: boolean | null
+          message: string
+          scheduled_date: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_sent?: boolean | null
+          message: string
+          scheduled_date: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_sent?: boolean | null
+          message?: string
+          scheduled_date?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       journal_entries: {
         Row: {
           content: string
@@ -42,6 +72,7 @@ export type Database = {
           emotion_tags: string[] | null
           id: string
           is_favorite: boolean | null
+          is_private: boolean | null
           media_urls: string[] | null
           mood: string | null
           title: string | null
@@ -55,6 +86,7 @@ export type Database = {
           emotion_tags?: string[] | null
           id?: string
           is_favorite?: boolean | null
+          is_private?: boolean | null
           media_urls?: string[] | null
           mood?: string | null
           title?: string | null
@@ -68,6 +100,7 @@ export type Database = {
           emotion_tags?: string[] | null
           id?: string
           is_favorite?: boolean | null
+          is_private?: boolean | null
           media_urls?: string[] | null
           mood?: string | null
           title?: string | null
@@ -82,6 +115,10 @@ export type Database = {
           created_at: string
           font_preference: string | null
           id: string
+          language_preference: string | null
+          lock_pin: string | null
+          notifications_enabled: boolean | null
+          secret_lock_enabled: boolean | null
           theme_preference: string | null
           username: string | null
         }
@@ -89,6 +126,10 @@ export type Database = {
           created_at?: string
           font_preference?: string | null
           id: string
+          language_preference?: string | null
+          lock_pin?: string | null
+          notifications_enabled?: boolean | null
+          secret_lock_enabled?: boolean | null
           theme_preference?: string | null
           username?: string | null
         }
@@ -96,6 +137,10 @@ export type Database = {
           created_at?: string
           font_preference?: string | null
           id?: string
+          language_preference?: string | null
+          lock_pin?: string | null
+          notifications_enabled?: boolean | null
+          secret_lock_enabled?: boolean | null
           theme_preference?: string | null
           username?: string | null
         }
