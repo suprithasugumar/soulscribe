@@ -71,6 +71,28 @@ const Settings = () => {
         title: "Settings saved",
         description: "Your preferences have been updated successfully.",
       });
+
+      // Apply theme immediately
+      const html = document.documentElement;
+      if (settings.theme_preference === "dark") {
+        html.classList.add("dark");
+      } else if (settings.theme_preference === "light") {
+        html.classList.remove("dark");
+      } else {
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+          html.classList.add("dark");
+        } else {
+          html.classList.remove("dark");
+        }
+      }
+
+      // Apply font immediately
+      html.classList.remove("font-serif", "font-mono");
+      if (settings.font_preference === "serif") {
+        html.classList.add("font-serif");
+      } else if (settings.font_preference === "mono") {
+        html.classList.add("font-mono");
+      }
     } catch (error) {
       console.error("Error saving settings:", error);
       toast({

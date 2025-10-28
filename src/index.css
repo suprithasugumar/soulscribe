@@ -124,4 +124,13 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
   }
+  
+  /* Font preference classes */
+  html.font-serif {
+    font-family: 'Playfair Display', serif;
+  }
+  
+  html.font-mono {
+    font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
+  }
 }

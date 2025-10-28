@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { MusicSuggestions } from "@/components/MusicSuggestions";
 import { FutureMessage } from "@/components/FutureMessage";
 import { PDFExport } from "@/components/PDFExport";
+import { HappyMemories } from "@/components/HappyMemories";
 import { supabase } from "@/integrations/supabase/client";
 import { AuthGuard } from "@/components/AuthGuard";
 
@@ -31,6 +32,18 @@ const AIFeatures = () => {
       if (data) {
         setLanguage(data.language_preference || "en");
       }
+
+      // Load the most recent entry's mood
+      const { data: recentEntry } = await supabase
+        .from("journal_entries")
+        .select("mood")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single();
+
+      if (recentEntry?.mood) {
+        setCurrentMood(recentEntry.mood);
+      }
     } catch (error) {
       console.error("Error loading preferences:", error);
     }
@@ -52,6 +65,7 @@ const AIFeatures = () => {
           <div className="grid gap-6 md:grid-cols-2">
             <MusicSuggestions mood={currentMood} language={language} />
             <FutureMessage />
+            <HappyMemories />
           </div>
 
           <PDFExport />
