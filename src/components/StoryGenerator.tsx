@@ -56,7 +56,7 @@ export const StoryGenerator = () => {
     }
   };
 
-  const narrateStory = async () => {
+  const narrateStory = () => {
     if (!story) {
       toast({
         title: "No story",
@@ -66,49 +66,47 @@ export const StoryGenerator = () => {
       return;
     }
 
-    setLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("text-to-speech", {
-        body: { text: story },
-      });
-
-      if (error) throw error;
-
-      if (data?.audioContent) {
-        const audioBlob = new Blob(
-          [Uint8Array.from(atob(data.audioContent), c => c.charCodeAt(0))],
-          { type: "audio/mp3" }
-        );
-        const url = URL.createObjectURL(audioBlob);
-        setAudioUrl(url);
-        
-        const audio = new Audio(url);
-        audio.play();
+    // Use Web Speech API for text-to-speech
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(story);
+      utterance.rate = 0.9; // Slightly slower for better comprehension
+      utterance.pitch = 1;
+      utterance.volume = 1;
+      
+      utterance.onstart = () => {
         setIsPlaying(true);
-        
-        audio.onended = () => setIsPlaying(false);
-        
         toast({
           title: "Playing narration",
           description: "Listen to your story!",
         });
-      }
-    } catch (error) {
-      console.error("Error narrating story:", error);
+      };
+      
+      utterance.onend = () => {
+        setIsPlaying(false);
+      };
+      
+      utterance.onerror = () => {
+        setIsPlaying(false);
+        toast({
+          title: "Error",
+          description: "Failed to narrate story.",
+          variant: "destructive",
+        });
+      };
+      
+      window.speechSynthesis.speak(utterance);
+    } else {
       toast({
-        title: "Error",
-        description: "Failed to narrate story. Please try again.",
+        title: "Not supported",
+        description: "Text-to-speech is not supported in your browser.",
         variant: "destructive",
       });
-    } finally {
-      setLoading(false);
     }
   };
 
   const stopNarration = () => {
-    if (audioUrl) {
-      const audio = new Audio(audioUrl);
-      audio.pause();
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
       setIsPlaying(false);
     }
   };
