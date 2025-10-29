@@ -5,17 +5,17 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useUserSettings } from "./hooks/useUserSettings";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Home from "./pages/Home";
 import NewEntry from "./pages/NewEntry";
+import EntryDetail from "./pages/EntryDetail";
 import AIFeatures from "./pages/AIFeatures";
 import MoodTracker from "./pages/MoodTracker";
 import Settings from "./pages/Settings";
-import EntryDetail from "./pages/EntryDetail";
 import SecretEntries from "./pages/SecretEntries";
 import NotFound from "./pages/NotFound";
-import { useUserSettings } from "./hooks/useUserSettings";
 
 const queryClient = new QueryClient();
 
