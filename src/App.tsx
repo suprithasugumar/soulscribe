@@ -13,6 +13,7 @@ import AIFeatures from "./pages/AIFeatures";
 import MoodTracker from "./pages/MoodTracker";
 import Settings from "./pages/Settings";
 import EntryDetail from "./pages/EntryDetail";
+import SecretEntries from "./pages/SecretEntries";
 import NotFound from "./pages/NotFound";
 import { useUserSettings } from "./hooks/useUserSettings";
 
@@ -64,6 +65,7 @@ const App = () => {
             <Route path="/ai-features" element={<AIFeatures />} />
             <Route path="/mood-tracker" element={<MoodTracker />} />
             <Route path="/settings" element={session ? <Settings /> : <Navigate to="/auth" />} />
+            <Route path="/secret-entries" element={session ? <SecretEntries /> : <Navigate to="/auth" />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

@@ -31,11 +31,13 @@ export const useUserSettings = () => {
           }
 
           // Apply font
-          html.classList.remove("font-serif", "font-mono");
+          html.classList.remove("font-serif", "font-mono", "font-handwriting");
           if (data.font_preference === "serif") {
             html.classList.add("font-serif");
           } else if (data.font_preference === "mono") {
             html.classList.add("font-mono");
+          } else if (data.font_preference === "handwriting") {
+            html.classList.add("font-handwriting");
           }
         }
       } catch (error) {

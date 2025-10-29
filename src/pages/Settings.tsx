@@ -20,7 +20,9 @@ const Settings = () => {
     language_preference: "en",
     notifications_enabled: true,
     secret_lock_enabled: false,
-    lock_pin: ""
+    lock_pin: "",
+    theme_variant: "default",
+    font_size: "medium"
   });
 
   useEffect(() => {
@@ -46,11 +48,44 @@ const Settings = () => {
           language_preference: data.language_preference || "en",
           notifications_enabled: data.notifications_enabled ?? true,
           secret_lock_enabled: data.secret_lock_enabled ?? false,
-          lock_pin: data.lock_pin || ""
+          lock_pin: data.lock_pin || "",
+          theme_variant: data.theme_variant || "default",
+          font_size: data.font_size || "medium"
         });
+        
+        // Apply settings immediately on load
+        applyTheme(data.theme_preference || "default");
+        applyFont(data.font_preference || "default");
       }
     } catch (error) {
       console.error("Error loading settings:", error);
+    }
+  };
+
+  const applyTheme = (theme: string) => {
+    const html = document.documentElement;
+    if (theme === "dark") {
+      html.classList.add("dark");
+    } else if (theme === "light") {
+      html.classList.remove("dark");
+    } else {
+      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        html.classList.add("dark");
+      } else {
+        html.classList.remove("dark");
+      }
+    }
+  };
+
+  const applyFont = (font: string) => {
+    const html = document.documentElement;
+    html.classList.remove("font-serif", "font-mono", "font-handwriting");
+    if (font === "serif") {
+      html.classList.add("font-serif");
+    } else if (font === "mono") {
+      html.classList.add("font-mono");
+    } else if (font === "handwriting") {
+      html.classList.add("font-handwriting");
     }
   };
 
@@ -72,27 +107,8 @@ const Settings = () => {
         description: "Your preferences have been updated successfully.",
       });
 
-      // Apply theme immediately
-      const html = document.documentElement;
-      if (settings.theme_preference === "dark") {
-        html.classList.add("dark");
-      } else if (settings.theme_preference === "light") {
-        html.classList.remove("dark");
-      } else {
-        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-          html.classList.add("dark");
-        } else {
-          html.classList.remove("dark");
-        }
-      }
-
-      // Apply font immediately
-      html.classList.remove("font-serif", "font-mono");
-      if (settings.font_preference === "serif") {
-        html.classList.add("font-serif");
-      } else if (settings.font_preference === "mono") {
-        html.classList.add("font-mono");
-      }
+      applyTheme(settings.theme_preference);
+      applyFont(settings.font_preference);
     } catch (error) {
       console.error("Error saving settings:", error);
       toast({
@@ -131,9 +147,13 @@ const Settings = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="default">Default</SelectItem>
-                  <SelectItem value="dark">Dark</SelectItem>
-                  <SelectItem value="light">Light</SelectItem>
+                  <SelectItem value="default">System Default</SelectItem>
+                  <SelectItem value="light">Light Mode</SelectItem>
+                  <SelectItem value="dark">Dark Mode</SelectItem>
+                  <SelectItem value="midnight">Midnight Blue</SelectItem>
+                  <SelectItem value="sunset">Sunset Orange</SelectItem>
+                  <SelectItem value="forest">Forest Green</SelectItem>
+                  <SelectItem value="ocean">Ocean Blue</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -148,9 +168,10 @@ const Settings = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="default">Default</SelectItem>
-                  <SelectItem value="serif">Serif</SelectItem>
-                  <SelectItem value="mono">Monospace</SelectItem>
+                  <SelectItem value="default">Sans Serif (Default)</SelectItem>
+                  <SelectItem value="serif">Serif (Classic)</SelectItem>
+                  <SelectItem value="mono">Monospace (Code)</SelectItem>
+                  <SelectItem value="handwriting">Handwriting (Casual)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -236,19 +257,36 @@ const Settings = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="en">English</SelectItem>
+                <SelectItem value="hi">हिन्दी (Hindi)</SelectItem>
+                <SelectItem value="ta">தமிழ் (Tamil)</SelectItem>
+                <SelectItem value="te">తెలుగు (Telugu)</SelectItem>
+                <SelectItem value="mr">मराठी (Marathi)</SelectItem>
+                <SelectItem value="bn">বাংলা (Bengali)</SelectItem>
+                <SelectItem value="gu">ગુજરાતી (Gujarati)</SelectItem>
+                <SelectItem value="kn">ಕನ್ನಡ (Kannada)</SelectItem>
+                <SelectItem value="ml">മലയാളം (Malayalam)</SelectItem>
+                <SelectItem value="pa">ਪੰਜਾਬੀ (Punjabi)</SelectItem>
                 <SelectItem value="es">Español</SelectItem>
                 <SelectItem value="fr">Français</SelectItem>
                 <SelectItem value="de">Deutsch</SelectItem>
-                <SelectItem value="hi">हिन्दी</SelectItem>
                 <SelectItem value="zh">中文</SelectItem>
               </SelectContent>
             </Select>
           </CardContent>
         </Card>
 
-        <Button onClick={saveSettings} disabled={loading} className="w-full">
-          {loading ? "Saving..." : "Save Settings"}
-        </Button>
+        <div className="flex gap-4">
+          <Button onClick={saveSettings} disabled={loading} className="flex-1">
+            {loading ? "Saving..." : "Save Settings"}
+          </Button>
+          <Button
+            onClick={() => navigate("/secret-entries")}
+            variant="outline"
+            className="flex-1"
+          >
+            View Secret Entries
+          </Button>
+        </div>
       </div>
     </div>
   );

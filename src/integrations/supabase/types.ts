@@ -114,34 +114,40 @@ export type Database = {
         Row: {
           created_at: string
           font_preference: string | null
+          font_size: string | null
           id: string
           language_preference: string | null
           lock_pin: string | null
           notifications_enabled: boolean | null
           secret_lock_enabled: boolean | null
           theme_preference: string | null
+          theme_variant: string | null
           username: string | null
         }
         Insert: {
           created_at?: string
           font_preference?: string | null
+          font_size?: string | null
           id: string
           language_preference?: string | null
           lock_pin?: string | null
           notifications_enabled?: boolean | null
           secret_lock_enabled?: boolean | null
           theme_preference?: string | null
+          theme_variant?: string | null
           username?: string | null
         }
         Update: {
           created_at?: string
           font_preference?: string | null
+          font_size?: string | null
           id?: string
           language_preference?: string | null
           lock_pin?: string | null
           notifications_enabled?: boolean | null
           secret_lock_enabled?: boolean | null
           theme_preference?: string | null
+          theme_variant?: string | null
           username?: string | null
         }
         Relationships: []

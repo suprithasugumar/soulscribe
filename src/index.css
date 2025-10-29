@@ -133,4 +133,8 @@ All colors MUST be HSL.
   html.font-mono {
     font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
   }
+  
+  html.font-handwriting {
+    font-family: 'Kalam', 'Comic Sans MS', cursive;
+  }
 }

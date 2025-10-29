@@ -6,6 +6,7 @@ import { MusicSuggestions } from "@/components/MusicSuggestions";
 import { FutureMessage } from "@/components/FutureMessage";
 import { PDFExport } from "@/components/PDFExport";
 import { HappyMemories } from "@/components/HappyMemories";
+import { StoryGenerator } from "@/components/StoryGenerator";
 import { supabase } from "@/integrations/supabase/client";
 import { AuthGuard } from "@/components/AuthGuard";
 
@@ -66,6 +67,7 @@ const AIFeatures = () => {
             <MusicSuggestions mood={currentMood} language={language} />
             <FutureMessage />
             <HappyMemories />
+            <StoryGenerator />
           </div>
 
           <PDFExport />
