@@ -11,12 +11,16 @@ serve(async (req) => {
   }
 
   try {
-    const { entries } = await req.json();
+    const { entries, maxLength } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
 
     const entriesText = entries.map((e: any) => 
       `Mood: ${e.mood || 'unspecified'}. ${e.content}`
     ).join('\n\n');
+
+    const lengthInstruction = maxLength === "short" 
+      ? "Keep the story to 3-4 short paragraphs maximum (about 150 words)." 
+      : "Create a short story (no more than 200 words).";
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -28,7 +32,7 @@ serve(async (req) => {
         model: 'google/gemini-2.5-flash',
         messages: [{
           role: 'user',
-          content: `Create a short, creative story based on these journal entries:\n\n${entriesText}\n\nMake it inspiring and reflective.`
+          content: `Create a short, creative story based on these journal entries:\n\n${entriesText}\n\nMake it inspiring and reflective. ${lengthInstruction}`
         }],
       }),
     });

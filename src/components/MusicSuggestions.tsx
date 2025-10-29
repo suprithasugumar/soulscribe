@@ -73,11 +73,35 @@ export const MusicSuggestions = ({ mood, language = "en" }: MusicSuggestionsProp
           <div className="space-y-2">
             <h4 className="font-medium text-sm">Recommended for your {mood} mood:</h4>
             <ul className="space-y-2">
-              {suggestions.map((song, index) => (
-                <li key={index} className="text-sm p-2 bg-muted rounded-md">
-                  {song}
-                </li>
-              ))}
+              {suggestions.map((song, index) => {
+                const spotifySearch = `https://open.spotify.com/search/${encodeURIComponent(song)}`;
+                const youtubeSearch = `https://www.youtube.com/results?search_query=${encodeURIComponent(song)}`;
+                
+                return (
+                  <li key={index} className="text-sm p-3 bg-muted rounded-md space-y-2">
+                    <div className="font-medium">{song}</div>
+                    <div className="flex gap-2">
+                      <a
+                        href={spotifySearch}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-primary hover:underline"
+                      >
+                        🎵 Open in Spotify
+                      </a>
+                      <span className="text-xs text-muted-foreground">•</span>
+                      <a
+                        href={youtubeSearch}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-primary hover:underline"
+                      >
+                        ▶️ Search on YouTube
+                      </a>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         )}

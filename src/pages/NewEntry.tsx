@@ -14,6 +14,7 @@ import { VoiceRecorder } from "@/components/VoiceRecorder";
 import { MediaUploader } from "@/components/MediaUploader";
 import { TextEnhancer } from "@/components/TextEnhancer";
 import { DoodleGenerator } from "@/components/DoodleGenerator";
+import { AIReflection } from "@/components/AIReflection";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
@@ -27,6 +28,7 @@ const NewEntry = () => {
   const [saving, setSaving] = useState(false);
   const [mediaUrls, setMediaUrls] = useState<string[]>([]);
   const [isPrivate, setIsPrivate] = useState(false);
+  const [showReflection, setShowReflection] = useState(false);
 
   useEffect(() => {
     fetchDailyPrompt();
@@ -83,7 +85,8 @@ const NewEntry = () => {
 
       if (error) throw error;
       toast.success("Entry saved!");
-      navigate("/");
+      setShowReflection(true);
+      setTimeout(() => navigate("/"), 8500);
     } catch (error: any) {
       toast.error("Failed to save entry");
       console.error(error);
@@ -94,6 +97,7 @@ const NewEntry = () => {
 
   return (
     <AuthGuard>
+      <AIReflection show={showReflection} onClose={() => setShowReflection(false)} />
       <div className="min-h-screen bg-gradient-to-br from-background via-muted to-accent/20">
         <div className="container mx-auto px-4 py-8 max-w-4xl">
           <header className="flex items-center justify-between mb-8">

@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Plus, LogOut, Sparkles, TrendingUp, Settings } from "lucide-react";
 import { toast } from "sonner";
 import { AuthGuard } from "@/components/AuthGuard";
+import { GratitudeFlashback } from "@/components/GratitudeFlashback";
 
 interface JournalEntry {
   id: string;
@@ -123,6 +124,8 @@ const Home = () => {
               </Button>
             </CardContent>
           </Card>
+
+          <GratitudeFlashback />
 
           <div className="space-y-4">
             <h2 className="text-2xl font-playfair font-semibold">Recent Entries</h2>

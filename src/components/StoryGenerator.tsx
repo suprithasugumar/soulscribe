@@ -2,7 +2,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, Loader2, Volume2, VolumeX } from "lucide-react";
+import { BookOpen, Loader2, Volume2, VolumeX, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export const StoryGenerator = () => {
@@ -34,7 +34,7 @@ export const StoryGenerator = () => {
       }
 
       const { data, error: functionError } = await supabase.functions.invoke("generate-story", {
-        body: { entries },
+        body: { entries, maxLength: "short" },
       });
 
       if (functionError) throw functionError;
@@ -155,7 +155,17 @@ export const StoryGenerator = () => {
 
         {story && (
           <div className="space-y-2">
-            <h4 className="font-medium text-sm">Your Story:</h4>
+            <div className="flex items-center justify-between">
+              <h4 className="font-medium text-sm">Your Story:</h4>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setStory("")}
+                className="h-6 w-6"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
             <div className="p-4 bg-muted rounded-lg">
               <p className="text-sm whitespace-pre-wrap">{story}</p>
             </div>
