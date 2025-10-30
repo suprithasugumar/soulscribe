@@ -114,6 +114,50 @@ All colors MUST be HSL.
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+
+  .theme-midnight {
+    --background: 220 40% 10%;
+    --foreground: 210 40% 96%;
+    --card: 220 35% 14%;
+    --card-foreground: 210 40% 96%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+    --muted: 220 30% 18%;
+    --muted-foreground: 210 20% 65%;
+  }
+
+  .theme-sunset {
+    --background: 30 100% 98%;
+    --foreground: 20 40% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 20 40% 15%;
+    --primary: 25 95% 53%;
+    --primary-foreground: 0 0% 100%;
+    --muted: 30 60% 94%;
+    --muted-foreground: 20 30% 45%;
+  }
+
+  .theme-forest {
+    --background: 140 30% 12%;
+    --foreground: 120 25% 94%;
+    --card: 140 25% 16%;
+    --card-foreground: 120 25% 94%;
+    --primary: 142 76% 36%;
+    --primary-foreground: 0 0% 100%;
+    --muted: 140 20% 20%;
+    --muted-foreground: 120 15% 65%;
+  }
+
+  .theme-ocean {
+    --background: 200 40% 12%;
+    --foreground: 190 30% 94%;
+    --card: 200 35% 16%;
+    --card-foreground: 190 30% 94%;
+    --primary: 199 89% 48%;
+    --primary-foreground: 0 0% 100%;
+    --muted: 200 25% 20%;
+    --muted-foreground: 190 15% 65%;
+  }
 }
 
 @layer base {

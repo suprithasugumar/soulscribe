@@ -64,15 +64,25 @@ const Settings = () => {
 
   const applyTheme = (theme: string) => {
     const html = document.documentElement;
+    // Remove all theme classes first
+    html.classList.remove("dark", "theme-midnight", "theme-sunset", "theme-forest", "theme-ocean");
+    
     if (theme === "dark") {
       html.classList.add("dark");
     } else if (theme === "light") {
-      html.classList.remove("dark");
+      // Light mode - no additional classes needed
+    } else if (theme === "midnight") {
+      html.classList.add("dark", "theme-midnight");
+    } else if (theme === "sunset") {
+      html.classList.add("theme-sunset");
+    } else if (theme === "forest") {
+      html.classList.add("dark", "theme-forest");
+    } else if (theme === "ocean") {
+      html.classList.add("dark", "theme-ocean");
     } else {
+      // default - use system preference
       if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
         html.classList.add("dark");
-      } else {
-        html.classList.remove("dark");
       }
     }
   };

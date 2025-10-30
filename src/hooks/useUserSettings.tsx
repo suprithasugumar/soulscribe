@@ -17,16 +17,25 @@ export const useUserSettings = () => {
         if (data) {
           // Apply theme
           const html = document.documentElement;
-          if (data.theme_preference === "dark") {
+          html.classList.remove("dark", "theme-midnight", "theme-sunset", "theme-forest", "theme-ocean");
+          
+          const theme = data.theme_preference;
+          if (theme === "dark") {
             html.classList.add("dark");
-          } else if (data.theme_preference === "light") {
-            html.classList.remove("dark");
+          } else if (theme === "light") {
+            // Light mode - no additional classes
+          } else if (theme === "midnight") {
+            html.classList.add("dark", "theme-midnight");
+          } else if (theme === "sunset") {
+            html.classList.add("theme-sunset");
+          } else if (theme === "forest") {
+            html.classList.add("dark", "theme-forest");
+          } else if (theme === "ocean") {
+            html.classList.add("dark", "theme-ocean");
           } else {
             // Default: use system preference
             if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
               html.classList.add("dark");
-            } else {
-              html.classList.remove("dark");
             }
           }
 
