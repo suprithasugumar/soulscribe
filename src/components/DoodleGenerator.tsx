@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Paintbrush, Loader2, X } from "lucide-react";
+import { Paintbrush, Loader2, X, Download, Eye } from "lucide-react";
 import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 interface DoodleGeneratorProps {
   text: string;
@@ -43,6 +44,26 @@ export const DoodleGenerator = ({ text, onDoodleGenerated }: DoodleGeneratorProp
     setDoodleUrl(null);
   };
 
+  const downloadDoodle = async () => {
+    if (!doodleUrl) return;
+    
+    try {
+      const response = await fetch(doodleUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `doodle-${Date.now()}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      toast.success("Doodle downloaded!");
+    } catch (error) {
+      toast.error("Failed to download doodle");
+    }
+  };
+
   return (
     <div className="space-y-2">
       <Button
@@ -61,15 +82,31 @@ export const DoodleGenerator = ({ text, onDoodleGenerated }: DoodleGeneratorProp
       </Button>
       
       {doodleUrl && (
-        <div className="relative group">
+        <div className="relative group space-y-2">
           <img src={doodleUrl} alt="Generated doodle" className="w-full max-h-64 object-contain rounded-lg" />
-          <button
-            type="button"
-            onClick={removeDoodle}
-            className="absolute top-2 right-2 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-          >
-            <X className="h-4 w-4" />
-          </button>
+          <div className="flex gap-2">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button type="button" variant="outline" size="sm" className="flex-1">
+                  <Eye className="h-4 w-4 mr-2" />
+                  View Full
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-3xl">
+                <DialogHeader>
+                  <DialogTitle>Your Doodle</DialogTitle>
+                </DialogHeader>
+                <img src={doodleUrl} alt="Generated doodle" className="w-full h-auto" />
+              </DialogContent>
+            </Dialog>
+            <Button type="button" variant="outline" size="sm" onClick={downloadDoodle} className="flex-1">
+              <Download className="h-4 w-4 mr-2" />
+              Download
+            </Button>
+            <Button type="button" variant="outline" size="sm" onClick={removeDoodle}>
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       )}
     </div>

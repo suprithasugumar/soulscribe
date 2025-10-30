@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { MusicSuggestions } from "@/components/MusicSuggestions";
 import { FutureMessage } from "@/components/FutureMessage";
 import { PDFExport } from "@/components/PDFExport";
-import { HappyMemories } from "@/components/HappyMemories";
+import { MemoryCollage } from "@/components/MemoryCollage";
 import { StoryGenerator } from "@/components/StoryGenerator";
 import { supabase } from "@/integrations/supabase/client";
 import { AuthGuard } from "@/components/AuthGuard";
@@ -66,7 +66,7 @@ const AIFeatures = () => {
           <div className="grid gap-6 md:grid-cols-2">
             <MusicSuggestions mood={currentMood} language={language} />
             <FutureMessage />
-            <HappyMemories />
+            <MemoryCollage />
             <StoryGenerator />
           </div>
 

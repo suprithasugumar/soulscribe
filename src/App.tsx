@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserSettings } from "./hooks/useUserSettings";
+import { FutureMessageNotifier } from "./components/FutureMessageNotifier";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Home from "./pages/Home";
@@ -56,6 +57,7 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        {session && <FutureMessageNotifier />}
         <BrowserRouter>
           <Routes>
             <Route path="/auth" element={!session ? <Auth /> : <Navigate to="/" />} />

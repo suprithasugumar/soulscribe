@@ -41,51 +41,62 @@ export const PDFExport = () => {
 
       if (error) throw error;
 
-      // Simple PDF generation using browser print
-      const printWindow = window.open("", "_blank");
-      if (!printWindow) throw new Error("Failed to open print window");
+      if (!entries || entries.length === 0) {
+        toast({
+          title: "No entries found",
+          description: "No journal entries found in the selected date range.",
+        });
+        setLoading(false);
+        return;
+      }
 
+      // Generate HTML content
       const htmlContent = `
         <!DOCTYPE html>
         <html>
           <head>
             <title>SoulScribe Journal - ${format(startDate, "PP")} to ${format(endDate, "PP")}</title>
             <style>
-              body { font-family: serif; padding: 20px; max-width: 800px; margin: 0 auto; }
-              h1 { text-align: center; color: #333; }
-              .entry { margin-bottom: 30px; page-break-inside: avoid; }
-              .entry-date { color: #666; font-size: 14px; }
-              .entry-mood { display: inline-block; background: #f0f0f0; padding: 4px 8px; border-radius: 4px; margin: 8px 0; }
-              .entry-content { line-height: 1.6; margin-top: 10px; }
-              @media print { .no-print { display: none; } }
+              body { font-family: Georgia, serif; padding: 40px; max-width: 800px; margin: 0 auto; line-height: 1.6; }
+              h1 { text-align: center; color: #333; margin-bottom: 10px; }
+              .subtitle { text-align: center; color: #666; margin-bottom: 40px; }
+              .entry { margin-bottom: 40px; page-break-inside: avoid; padding: 20px; border-bottom: 1px solid #eee; }
+              .entry-date { color: #888; font-size: 14px; margin-bottom: 10px; }
+              .entry-title { font-size: 20px; font-weight: bold; margin: 10px 0; color: #222; }
+              .entry-mood { display: inline-block; background: #f0f0f0; padding: 6px 12px; border-radius: 20px; margin: 10px 0; font-size: 13px; }
+              .entry-content { margin-top: 15px; white-space: pre-wrap; color: #333; }
+              @media print { body { padding: 20px; } }
             </style>
           </head>
           <body>
             <h1>SoulScribe Journal</h1>
-            <p style="text-align: center; color: #666;">
-              ${format(startDate, "PP")} - ${format(endDate, "PP")}
-            </p>
-            ${entries?.map(entry => `
+            <p class="subtitle">${format(startDate, "PP")} - ${format(endDate, "PP")}</p>
+            ${entries.map(entry => `
               <div class="entry">
-                <div class="entry-date">${format(new Date(entry.created_at), "PPP")}</div>
-                ${entry.title ? `<h2>${entry.title}</h2>` : ""}
+                <div class="entry-date">${format(new Date(entry.created_at), "PPPP")}</div>
+                ${entry.title ? `<div class="entry-title">${entry.title}</div>` : ""}
                 ${entry.mood ? `<span class="entry-mood">Mood: ${entry.mood}</span>` : ""}
                 <div class="entry-content">${entry.content}</div>
               </div>
-            `).join("") || "<p>No entries found for this date range.</p>"}
-            <button class="no-print" onclick="window.print()" style="margin-top: 20px; padding: 10px 20px;">
-              Print/Save as PDF
-            </button>
+            `).join("")}
           </body>
         </html>
       `;
 
-      printWindow.document.write(htmlContent);
-      printWindow.document.close();
+      // Create blob and download
+      const blob = new Blob([htmlContent], { type: 'text/html' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `journal-${format(startDate, "yyyy-MM-dd")}-to-${format(endDate, "yyyy-MM-dd")}.html`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
 
       toast({
-        title: "PDF ready",
-        description: "Your journal entries are ready to print or save as PDF.",
+        title: "Export complete",
+        description: "Your journal has been exported. Open the HTML file and use Print to save as PDF.",
       });
     } catch (error) {
       console.error("Error exporting to PDF:", error);
