@@ -3,6 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ImageIcon, Video, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { AudioRecorder } from "./AudioRecorder";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface MediaUploaderProps {
   onMediaUploaded: (urls: string[]) => void;
@@ -11,6 +13,7 @@ interface MediaUploaderProps {
 
 export const MediaUploader = ({ onMediaUploaded, currentUrls }: MediaUploaderProps) => {
   const [uploading, setUploading] = useState(false);
+  const { t } = useLanguage();
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'video') => {
     const files = e.target.files;
@@ -41,10 +44,10 @@ export const MediaUploader = ({ onMediaUploaded, currentUrls }: MediaUploaderPro
 
       const newUrls = await Promise.all(uploadPromises);
       onMediaUploaded([...currentUrls, ...newUrls]);
-      toast.success(`${type === 'image' ? 'Images' : 'Videos'} uploaded successfully!`);
+      toast.success(t.uploadSuccess);
     } catch (error) {
       console.error("Upload error:", error);
-      toast.error("Failed to upload files");
+      toast.error(t.uploadError);
     } finally {
       setUploading(false);
     }
@@ -54,9 +57,13 @@ export const MediaUploader = ({ onMediaUploaded, currentUrls }: MediaUploaderPro
     onMediaUploaded(currentUrls.filter(u => u !== url));
   };
 
+  const handleAudioUploaded = (url: string) => {
+    onMediaUploaded([...currentUrls, url]);
+  };
+
   return (
     <div className="space-y-4">
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         <Button
           type="button"
           variant="outline"
@@ -72,7 +79,7 @@ export const MediaUploader = ({ onMediaUploaded, currentUrls }: MediaUploaderPro
             onChange={(e) => handleFileUpload(e, 'image')}
           />
           {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImageIcon className="h-4 w-4 mr-2" />}
-          Add Images
+          {t.addImages}
         </Button>
         <Button
           type="button"
@@ -89,8 +96,9 @@ export const MediaUploader = ({ onMediaUploaded, currentUrls }: MediaUploaderPro
             onChange={(e) => handleFileUpload(e, 'video')}
           />
           {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Video className="h-4 w-4 mr-2" />}
-          Add Videos
+          {t.addVideos}
         </Button>
+        <AudioRecorder onAudioUploaded={handleAudioUploaded} />
       </div>
 
       {currentUrls.length > 0 && (
@@ -99,9 +107,11 @@ export const MediaUploader = ({ onMediaUploaded, currentUrls }: MediaUploaderPro
             <div key={index} className="relative group">
               {url.includes('journal-images') ? (
                 <img src={url} alt={`Upload ${index + 1}`} className="w-full h-24 object-cover rounded" />
-              ) : (
-                <video src={url} className="w-full h-24 object-cover rounded" />
-              )}
+              ) : url.includes('journal-videos') ? (
+                <video src={url} controls className="w-full h-24 object-cover rounded" />
+              ) : url.includes('voice-notes') ? (
+                <audio src={url} controls className="w-full rounded" />
+              ) : null}
               <button
                 type="button"
                 onClick={() => removeMedia(url)}

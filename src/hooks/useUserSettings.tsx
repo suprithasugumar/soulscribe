@@ -10,7 +10,7 @@ export const useUserSettings = () => {
 
         const { data } = await supabase
           .from("profiles")
-          .select("theme_preference, font_preference")
+          .select("theme_preference, font_preference, language_preference")
           .eq("id", user.id)
           .single();
 
@@ -47,6 +47,17 @@ export const useUserSettings = () => {
             html.classList.add("font-mono");
           } else if (data.font_preference === "handwriting") {
             html.classList.add("font-handwriting");
+          }
+          
+          // Apply language
+          if (data.language_preference) {
+            html.lang = data.language_preference;
+            // Set direction for RTL languages
+            if (data.language_preference === 'ar') {
+              html.dir = 'rtl';
+            } else {
+              html.dir = 'ltr';
+            }
           }
         }
       } catch (error) {
