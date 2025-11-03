@@ -11,7 +11,29 @@ serve(async (req) => {
   }
 
   try {
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Authentication required' }),
+        { status: 401, headers: corsHeaders }
+      );
+    }
+
     const { text } = await req.json();
+    
+    if (!text || typeof text !== 'string') {
+      return new Response(
+        JSON.stringify({ error: 'Invalid text input' }),
+        { status: 400, headers: corsHeaders }
+      );
+    }
+    
+    if (text.length > 5000) {
+      return new Response(
+        JSON.stringify({ error: 'Text too long (max 5,000 characters)' }),
+        { status: 400, headers: corsHeaders }
+      );
+    }
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {

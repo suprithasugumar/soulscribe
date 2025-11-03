@@ -12,7 +12,30 @@ serve(async (req) => {
   }
 
   try {
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Authentication required' }),
+        { status: 401, headers: corsHeaders }
+      );
+    }
+
     const { audio } = await req.json();
+    
+    if (!audio || typeof audio !== 'string') {
+      return new Response(
+        JSON.stringify({ error: 'Invalid audio data' }),
+        { status: 400, headers: corsHeaders }
+      );
+    }
+    
+    // Limit base64 audio to ~5MB
+    if (audio.length > 7000000) {
+      return new Response(
+        JSON.stringify({ error: 'Audio file too large (max 5MB)' }),
+        { status: 400, headers: corsHeaders }
+      );
+    }
     
     const binaryAudio = Uint8Array.from(atob(audio), c => c.charCodeAt(0));
     const formData = new FormData();

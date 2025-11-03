@@ -11,7 +11,29 @@ serve(async (req) => {
   }
 
   try {
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Authentication required' }),
+        { status: 401, headers: corsHeaders }
+      );
+    }
+
     const { mood, language = "en" } = await req.json();
+    
+    if (mood && typeof mood !== 'string') {
+      return new Response(
+        JSON.stringify({ error: 'Invalid mood format' }),
+        { status: 400, headers: corsHeaders }
+      );
+    }
+    
+    if (mood && mood.length > 100) {
+      return new Response(
+        JSON.stringify({ error: 'Mood string too long (max 100 characters)' }),
+        { status: 400, headers: corsHeaders }
+      );
+    }
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
     if (!LOVABLE_API_KEY) {

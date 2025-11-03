@@ -11,7 +11,29 @@ serve(async (req) => {
   }
 
   try {
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Authentication required' }),
+        { status: 401, headers: corsHeaders }
+      );
+    }
+
     const { recentEntries } = await req.json();
+    
+    if (recentEntries && !Array.isArray(recentEntries)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid entries format' }),
+        { status: 400, headers: corsHeaders }
+      );
+    }
+    
+    if (recentEntries && recentEntries.length > 20) {
+      return new Response(
+        JSON.stringify({ error: 'Too many entries (max 20)' }),
+        { status: 400, headers: corsHeaders }
+      );
+    }
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
 
     if (!recentEntries || recentEntries.length === 0) {
