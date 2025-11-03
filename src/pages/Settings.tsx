@@ -99,15 +99,52 @@ const Settings = () => {
     }
   };
 
+  const hashPin = async (pin: string): Promise<string> => {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(pin);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  };
+
   const saveSettings = async () => {
     setLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No user found");
 
+      // Prepare settings update with hashed PIN if provided
+      const updateData: any = {
+        theme_preference: settings.theme_preference,
+        font_preference: settings.font_preference,
+        language_preference: settings.language_preference,
+        notifications_enabled: settings.notifications_enabled,
+        secret_lock_enabled: settings.secret_lock_enabled,
+        theme_variant: settings.theme_variant,
+        font_size: settings.font_size
+      };
+
+      // Hash PIN if secret lock is enabled and PIN is provided
+      if (settings.secret_lock_enabled && settings.lock_pin) {
+        if (settings.lock_pin.length !== 4 || !/^\d{4}$/.test(settings.lock_pin)) {
+          toast({
+            title: "Invalid PIN",
+            description: "PIN must be exactly 4 digits.",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+        updateData.lock_pin_hash = await hashPin(settings.lock_pin);
+        updateData.lock_pin = null; // Clear old plaintext PIN
+      } else if (!settings.secret_lock_enabled) {
+        updateData.lock_pin_hash = null;
+        updateData.lock_pin = null;
+      }
+
       const { error } = await supabase
         .from("profiles")
-        .update(settings)
+        .update(updateData)
         .eq("id", user.id);
 
       if (error) throw error;

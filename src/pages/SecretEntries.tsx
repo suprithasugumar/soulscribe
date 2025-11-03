@@ -21,13 +21,13 @@ const SecretEntries = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data } = await supabase
+      const { data: profile } = await supabase
         .from("profiles")
-        .select("lock_pin, secret_lock_enabled")
+        .select("secret_lock_enabled")
         .eq("id", user.id)
         .single();
 
-      if (!data?.secret_lock_enabled) {
+      if (!profile?.secret_lock_enabled) {
         toast({
           title: "Secret lock not enabled",
           description: "Please enable secret lock in settings first.",
@@ -37,21 +37,31 @@ const SecretEntries = () => {
         return;
       }
 
-      if (data.lock_pin === pin) {
-        setIsUnlocked(true);
-        loadSecretEntries();
-        toast({
-          title: "Unlocked!",
-          description: "Access granted to private entries.",
-        });
-      } else {
+      // Call secure verify-pin edge function
+      const { data: { session } } = await supabase.auth.getSession();
+      const { data, error } = await supabase.functions.invoke('verify-pin', {
+        body: { pin },
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`
+        }
+      });
+
+      if (error || !data?.success) {
         toast({
           title: "Wrong PIN",
           description: "Please try again.",
           variant: "destructive",
         });
         setPin("");
+        return;
       }
+
+      setIsUnlocked(true);
+      loadSecretEntries();
+      toast({
+        title: "Unlocked!",
+        description: "Access granted to private entries.",
+      });
     } catch (error) {
       console.error("Error verifying PIN:", error);
       toast({
