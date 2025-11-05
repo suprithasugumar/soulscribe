@@ -14,7 +14,6 @@ import { MediaUploader } from "@/components/MediaUploader";
 import { TextEnhancer } from "@/components/TextEnhancer";
 import { DoodleGenerator } from "@/components/DoodleGenerator";
 import { AIReflection } from "@/components/AIReflection";
-import { VoiceJournalRecorder } from "@/components/VoiceJournalRecorder";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -31,7 +30,6 @@ const NewEntry = () => {
   const [mediaUrls, setMediaUrls] = useState<string[]>([]);
   const [isPrivate, setIsPrivate] = useState(false);
   const [showReflection, setShowReflection] = useState(false);
-  const [voiceNoteUrl, setVoiceNoteUrl] = useState("");
 
   // Ensure t is always defined
   if (!t) {
@@ -67,17 +65,6 @@ const NewEntry = () => {
     );
   };
 
-  const handleTranscription = (text: string) => {
-    setContent((prev) => (prev ? `${prev}\n\n${text}` : text));
-  };
-
-  const handleTranscriptionComplete = (transcription: string, audioUrl: string) => {
-    const validTranscription = transcription || "";
-    const validAudioUrl = audioUrl || "";
-    setContent((prev) => (prev ? `${prev}\n\n${validTranscription}` : validTranscription));
-    setVoiceNoteUrl(validAudioUrl);
-  };
-
   const handleSave = async () => {
     if (!content.trim()) {
       toast.error(t?.errorSaving || 'Failed to save entry');
@@ -97,7 +84,6 @@ const NewEntry = () => {
         emotion_tags: emotionTags,
         media_urls: mediaUrls,
         is_private: isPrivate,
-        voice_note_url: voiceNoteUrl || null,
       });
 
       if (error) throw error;
@@ -149,8 +135,6 @@ const NewEntry = () => {
           )}
 
           <div className="space-y-6">
-            <VoiceJournalRecorder onTranscriptionComplete={handleTranscriptionComplete} />
-
             <Card className="shadow-medium backdrop-blur-sm bg-card/80 border-none">
               <CardContent className="pt-6 space-y-4">
                 <div>
