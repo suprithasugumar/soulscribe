@@ -2,17 +2,18 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Music, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface MusicSuggestionsProps {
   mood?: string;
-  language?: string;
 }
 
-export const MusicSuggestions = ({ mood, language = "en" }: MusicSuggestionsProps) => {
+export const MusicSuggestions = ({ mood }: MusicSuggestionsProps) => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [language, setLanguage] = useState("en");
   const { toast } = useToast();
 
   const getSuggestions = async () => {
@@ -58,6 +59,23 @@ export const MusicSuggestions = ({ mood, language = "en" }: MusicSuggestionsProp
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Language</label>
+          <Select value={language} onValueChange={setLanguage}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select language" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="en">English</SelectItem>
+              <SelectItem value="es">Español</SelectItem>
+              <SelectItem value="fr">Français</SelectItem>
+              <SelectItem value="de">Deutsch</SelectItem>
+              <SelectItem value="ar">العربية</SelectItem>
+              <SelectItem value="hi">हिन्दी</SelectItem>
+              <SelectItem value="zh">中文</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
         <Button onClick={getSuggestions} disabled={loading || !mood} className="w-full">
           {loading ? (
             <>

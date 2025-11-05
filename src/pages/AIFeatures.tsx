@@ -63,12 +63,12 @@ const AIFeatures = () => {
             </h1>
           </div>
           
-          <div className="grid gap-6 md:grid-cols-2">
-            <MusicSuggestions mood={currentMood} language={language} />
-            <FutureMessage />
-            <MemoryCollage />
-            <StoryGenerator />
-          </div>
+        <div className="grid gap-6 md:grid-cols-2">
+          <MusicSuggestions mood={currentMood} />
+          <FutureMessage />
+          <MemoryCollage />
+          <StoryGenerator />
+        </div>
 
           <PDFExport />
         </div>
