@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft } from "lucide-react";
 import { PasswordChangeForm } from "@/components/PasswordChangeForm";
+import { SecurityQuestionSetup } from "@/components/SecurityQuestionSetup";
+import { ChangePinDialog } from "@/components/ChangePinDialog";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -23,7 +25,10 @@ const Settings = () => {
     secret_lock_enabled: false,
     lock_pin: "",
     theme_variant: "default",
-    font_size: "medium"
+    font_size: "medium",
+    security_question: "",
+    security_answer: "",
+    has_security_question: false
   });
 
   useEffect(() => {
@@ -51,7 +56,10 @@ const Settings = () => {
           secret_lock_enabled: data.secret_lock_enabled ?? false,
           lock_pin: data.lock_pin || "",
           theme_variant: data.theme_variant || "default",
-          font_size: data.font_size || "medium"
+          font_size: data.font_size || "medium",
+          security_question: data.security_question || "",
+          security_answer: "",
+          has_security_question: !!data.security_question
         });
         
         // Apply settings immediately on load
@@ -100,9 +108,9 @@ const Settings = () => {
     }
   };
 
-  const hashPin = async (pin: string): Promise<string> => {
+  const hashString = async (str: string): Promise<string> => {
     const encoder = new TextEncoder();
-    const data = encoder.encode(pin);
+    const data = encoder.encode(str.toLowerCase().trim());
     const hashBuffer = await crypto.subtle.digest('SHA-256', data);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
@@ -125,6 +133,21 @@ const Settings = () => {
         font_size: settings.font_size
       };
 
+      // Validate security question if enabling secret lock for the first time
+      if (settings.secret_lock_enabled && !settings.has_security_question) {
+        if (!settings.security_question || !settings.security_answer) {
+          toast({
+            title: "Security Question Required",
+            description: "Please set up a security question to enable secret lock.",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+        updateData.security_question = settings.security_question;
+        updateData.security_answer_hash = await hashString(settings.security_answer);
+      }
+
       // Hash PIN if secret lock is enabled and PIN is provided
       if (settings.secret_lock_enabled && settings.lock_pin) {
         if (settings.lock_pin.length !== 4 || !/^\d{4}$/.test(settings.lock_pin)) {
@@ -136,7 +159,7 @@ const Settings = () => {
           setLoading(false);
           return;
         }
-        updateData.lock_pin_hash = await hashPin(settings.lock_pin);
+        updateData.lock_pin_hash = await hashString(settings.lock_pin);
         updateData.lock_pin = null; // Clear old plaintext PIN
       } else if (!settings.secret_lock_enabled) {
         updateData.lock_pin_hash = null;
@@ -249,19 +272,37 @@ const Settings = () => {
             </div>
 
             {settings.secret_lock_enabled && (
-              <div className="space-y-2">
-                <Label htmlFor="pin">Lock PIN (4 digits)</Label>
-                <Input
-                  id="pin"
-                  type="password"
-                  maxLength={4}
-                  placeholder="Enter 4-digit PIN"
-                  value={settings.lock_pin}
-                  onChange={(e) =>
-                    setSettings({ ...settings, lock_pin: e.target.value.replace(/\D/g, "") })
-                  }
-                />
-              </div>
+              <>
+                {!settings.has_security_question && (
+                  <div className="p-4 bg-muted rounded-lg space-y-4">
+                    <p className="text-sm font-medium">First time setup - Security Question Required</p>
+                    <SecurityQuestionSetup
+                      question={settings.security_question}
+                      answer={settings.security_answer}
+                      onQuestionChange={(q) => setSettings({ ...settings, security_question: q })}
+                      onAnswerChange={(a) => setSettings({ ...settings, security_answer: a })}
+                    />
+                  </div>
+                )}
+                <div className="space-y-2">
+                  <Label htmlFor="pin">Lock PIN (4 digits)</Label>
+                  <Input
+                    id="pin"
+                    type="password"
+                    maxLength={4}
+                    placeholder="Enter 4-digit PIN"
+                    value={settings.lock_pin}
+                    onChange={(e) =>
+                      setSettings({ ...settings, lock_pin: e.target.value.replace(/\D/g, "") })
+                    }
+                  />
+                </div>
+                {settings.has_security_question && (
+                  <div className="pt-2">
+                    <ChangePinDialog />
+                  </div>
+                )}
+              </>
             )}
           </CardContent>
         </Card>

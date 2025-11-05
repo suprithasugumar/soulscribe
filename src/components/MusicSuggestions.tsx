@@ -101,28 +101,48 @@ export const MusicSuggestions = ({ mood }: MusicSuggestionsProps) => {
             <ul className="space-y-2">
               {suggestions.map((song, index) => {
                 const spotifySearch = `https://open.spotify.com/search/${encodeURIComponent(song)}`;
-                const youtubeSearch = `https://www.youtube.com/results?search_query=${encodeURIComponent(song)}`;
+                const appleMusicSearch = `https://music.apple.com/search?term=${encodeURIComponent(song)}`;
+                const jiosaavnSearch = `https://www.jiosaavn.com/search/${encodeURIComponent(song)}`;
+                const gaanaSearch = `https://gaana.com/search/${encodeURIComponent(song)}`;
                 
                 return (
                   <li key={index} className="text-sm p-3 bg-muted rounded-md space-y-2">
                     <div className="font-medium">{song}</div>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
                       <a
                         href={spotifySearch}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-xs text-primary hover:underline"
                       >
-                        🎵 Open in Spotify
+                        🎵 Spotify
                       </a>
                       <span className="text-xs text-muted-foreground">•</span>
                       <a
-                        href={youtubeSearch}
+                        href={appleMusicSearch}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-xs text-primary hover:underline"
                       >
-                        ▶️ Search on YouTube
+                        🍎 Apple Music
+                      </a>
+                      <span className="text-xs text-muted-foreground">•</span>
+                      <a
+                        href={jiosaavnSearch}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-primary hover:underline"
+                      >
+                        🎧 JioSaavn
+                      </a>
+                      <span className="text-xs text-muted-foreground">•</span>
+                      <a
+                        href={gaanaSearch}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-primary hover:underline"
+                      >
+                        🎶 Gaana
                       </a>
                     </div>
                   </li>
