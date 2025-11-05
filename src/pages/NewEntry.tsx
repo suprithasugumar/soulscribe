@@ -72,7 +72,7 @@ const NewEntry = () => {
 
   const handleSave = async () => {
     if (!content.trim()) {
-      toast.error(t.errorSaving);
+      toast.error(t?.errorSaving || 'Failed to save entry');
       return;
     }
 
@@ -93,11 +93,11 @@ const NewEntry = () => {
       });
 
       if (error) throw error;
-      toast.success(t.entrySaved);
+      toast.success(t?.entrySaved || 'Entry saved!');
       setShowReflection(true);
       setTimeout(() => navigate("/"), 8500);
     } catch (error: any) {
-      toast.error(t.errorSaving);
+      toast.error(t?.errorSaving || 'Failed to save entry');
       console.error(error);
     } finally {
       setSaving(false);
@@ -112,10 +112,10 @@ const NewEntry = () => {
           <header className="flex items-center justify-between mb-8">
             <Button variant="ghost" onClick={() => navigate("/")} className="gap-2">
               <ArrowLeft className="h-4 w-4" />
-              {t.back}
+              {t?.back || 'Back'}
             </Button>
             <h1 className="text-3xl font-playfair font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              {t.newEntry}
+              {t?.newEntry || 'New Entry'}
             </h1>
             <Button
               onClick={handleSave}
@@ -123,7 +123,7 @@ const NewEntry = () => {
               className="bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
             >
               <Save className="mr-2 h-4 w-4" />
-              {saving ? t.saving : t.save}
+              {saving ? (t?.saving || 'Saving...') : (t?.save || 'Save')}
             </Button>
           </header>
 
@@ -131,7 +131,7 @@ const NewEntry = () => {
             <Card className="mb-6 shadow-soft backdrop-blur-sm bg-secondary/20 border-none">
               <CardHeader>
                 <CardTitle className="text-lg font-inter flex items-center gap-2">
-                  ✨ {t.todaysPrompt}
+                  ✨ {t?.todaysPrompt || "Today's Prompt"}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -147,7 +147,7 @@ const NewEntry = () => {
               <CardContent className="pt-6 space-y-4">
                 <div>
                   <Input
-                    placeholder={t.titlePlaceholder}
+                    placeholder={t?.titlePlaceholder || 'Give your entry a title (optional)'}
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     className="text-xl font-playfair border-none focus-visible:ring-0 px-0"
@@ -156,14 +156,14 @@ const NewEntry = () => {
                 
                 <div className="space-y-2">
                   <Textarea
-                    placeholder={t.contentPlaceholder}
+                    placeholder={t?.contentPlaceholder || "What's on your mind today?"}
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     maxLength={50000}
                     className="min-h-[300px] resize-none border-none focus-visible:ring-0 px-0 font-inter"
                   />
                   <div className="text-sm text-muted-foreground text-right">
-                    {content.length.toLocaleString()} / 50,000 {t.characterCount}
+                    {content.length.toLocaleString()} / 50,000 {t?.characterCount || 'characters'}
                   </div>
                   <div className="flex gap-2 flex-wrap">
                     <TextEnhancer text={content} onTextEnhanced={setContent} />
@@ -191,7 +191,7 @@ const NewEntry = () => {
                     onCheckedChange={setIsPrivate}
                   />
                   <Label htmlFor="private" className="cursor-pointer">
-                    {t.markAsPrivate} 🔒
+                    {t?.markAsPrivate || 'Mark as private'} 🔒
                   </Label>
                 </div>
               </CardContent>
