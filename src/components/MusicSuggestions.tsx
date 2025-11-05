@@ -67,11 +67,19 @@ export const MusicSuggestions = ({ mood }: MusicSuggestionsProps) => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="en">English</SelectItem>
+              <SelectItem value="hi">हिन्दी (Hindi)</SelectItem>
+              <SelectItem value="ta">தமிழ் (Tamil)</SelectItem>
+              <SelectItem value="te">తెలుగు (Telugu)</SelectItem>
+              <SelectItem value="ml">മലയാളം (Malayalam)</SelectItem>
+              <SelectItem value="kn">ಕನ್ನಡ (Kannada)</SelectItem>
+              <SelectItem value="mr">मराठी (Marathi)</SelectItem>
+              <SelectItem value="bn">বাংলা (Bengali)</SelectItem>
+              <SelectItem value="gu">ગુજરાતી (Gujarati)</SelectItem>
+              <SelectItem value="pa">ਪੰਜਾਬੀ (Punjabi)</SelectItem>
               <SelectItem value="es">Español</SelectItem>
               <SelectItem value="fr">Français</SelectItem>
               <SelectItem value="de">Deutsch</SelectItem>
               <SelectItem value="ar">العربية</SelectItem>
-              <SelectItem value="hi">हिन्दी</SelectItem>
               <SelectItem value="zh">中文</SelectItem>
             </SelectContent>
           </Select>

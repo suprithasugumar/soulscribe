@@ -14,6 +14,7 @@ import { MediaUploader } from "@/components/MediaUploader";
 import { TextEnhancer } from "@/components/TextEnhancer";
 import { DoodleGenerator } from "@/components/DoodleGenerator";
 import { AIReflection } from "@/components/AIReflection";
+import { VoiceJournalRecorder } from "@/components/VoiceJournalRecorder";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -30,6 +31,7 @@ const NewEntry = () => {
   const [mediaUrls, setMediaUrls] = useState<string[]>([]);
   const [isPrivate, setIsPrivate] = useState(false);
   const [showReflection, setShowReflection] = useState(false);
+  const [voiceNoteUrl, setVoiceNoteUrl] = useState("");
 
   useEffect(() => {
     fetchDailyPrompt();
@@ -63,6 +65,11 @@ const NewEntry = () => {
     setContent((prev) => (prev ? `${prev}\n\n${text}` : text));
   };
 
+  const handleTranscriptionComplete = (transcription: string, audioUrl: string) => {
+    setContent((prev) => (prev ? `${prev}\n\n${transcription}` : transcription));
+    setVoiceNoteUrl(audioUrl);
+  };
+
   const handleSave = async () => {
     if (!content.trim()) {
       toast.error(t.errorSaving);
@@ -82,6 +89,7 @@ const NewEntry = () => {
         emotion_tags: emotionTags,
         media_urls: mediaUrls,
         is_private: isPrivate,
+        voice_note_url: voiceNoteUrl || null,
       });
 
       if (error) throw error;
@@ -133,6 +141,8 @@ const NewEntry = () => {
           )}
 
           <div className="space-y-6">
+            <VoiceJournalRecorder onTranscriptionComplete={handleTranscriptionComplete} />
+
             <Card className="shadow-medium backdrop-blur-sm bg-card/80 border-none">
               <CardContent className="pt-6 space-y-4">
                 <div>

@@ -13,7 +13,7 @@ import Home from "./pages/Home";
 import NewEntry from "./pages/NewEntry";
 import EntryDetail from "./pages/EntryDetail";
 import AIFeatures from "./pages/AIFeatures";
-import VoiceJournal from "./pages/VoiceJournal";
+import Statistics from "./pages/Statistics";
 import MoodTracker from "./pages/MoodTracker";
 import Settings from "./pages/Settings";
 import SecretEntries from "./pages/SecretEntries";
@@ -66,8 +66,8 @@ const App = () => {
             <Route path="/new-entry" element={<NewEntry />} />
             <Route path="/entry/:id" element={<EntryDetail />} />
         <Route path="/ai-features" element={<AIFeatures />} />
-        <Route path="/voice-journal" element={<VoiceJournal />} />
             <Route path="/mood-tracker" element={<MoodTracker />} />
+            <Route path="/statistics" element={<Statistics />} />
             <Route path="/settings" element={session ? <Settings /> : <Navigate to="/auth" />} />
             <Route path="/secret-entries" element={session ? <SecretEntries /> : <Navigate to="/auth" />} />
             <Route path="*" element={<NotFound />} />

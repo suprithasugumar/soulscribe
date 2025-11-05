@@ -3,10 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, LogOut, Sparkles, TrendingUp, Settings, Mic } from "lucide-react";
+import { Plus, LogOut, Sparkles, TrendingUp, Settings, Search, Filter, BarChart3 } from "lucide-react";
 import { toast } from "sonner";
 import { AuthGuard } from "@/components/AuthGuard";
 import { GratitudeFlashback } from "@/components/GratitudeFlashback";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 
 interface JournalEntry {
   id: string;
@@ -21,6 +24,10 @@ const Home = () => {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [filterMood, setFilterMood] = useState<string>("all");
+  const [filterTag, setFilterTag] = useState<string>("all");
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     fetchEntries();
@@ -28,20 +35,48 @@ const Home = () => {
 
   const fetchEntries = async () => {
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from("journal_entries")
         .select("*")
-        .order("created_at", { ascending: false })
-        .limit(10);
+        .order("created_at", { ascending: false });
+
+      // Apply filters
+      if (filterMood !== "all") {
+        query = query.eq("mood", filterMood);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
-      setEntries(data || []);
+      
+      let filteredData = data || [];
+      
+      // Apply keyword search
+      if (searchKeyword) {
+        filteredData = filteredData.filter(entry => 
+          entry.title?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+          entry.content.toLowerCase().includes(searchKeyword.toLowerCase())
+        );
+      }
+      
+      // Apply emotion tag filter
+      if (filterTag !== "all") {
+        filteredData = filteredData.filter(entry => 
+          entry.emotion_tags?.includes(filterTag)
+        );
+      }
+      
+      setEntries(filteredData);
     } catch (error: any) {
       toast.error("Failed to load entries");
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchEntries();
+  }, [searchKeyword, filterMood, filterTag]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -72,6 +107,14 @@ const Home = () => {
               SoulScribe
             </h1>
             <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => navigate("/statistics")}
+                className="transition-all hover:scale-105"
+              >
+                <BarChart3 className="h-4 w-4" />
+              </Button>
               <Button
                 variant="outline"
                 size="icon"
@@ -116,14 +159,6 @@ const Home = () => {
               </Button>
               <Button
                 variant="outline"
-                onClick={() => navigate("/voice-journal")}
-                className="flex-1 transition-all hover:scale-105"
-              >
-                <Mic className="mr-2 h-4 w-4" />
-                Voice Journal
-              </Button>
-              <Button
-                variant="outline"
                 onClick={() => navigate("/ai-features")}
                 className="flex-1 transition-all hover:scale-105"
               >
@@ -135,8 +170,98 @@ const Home = () => {
 
           <GratitudeFlashback />
 
+          <Card className="mb-6 shadow-medium backdrop-blur-sm bg-card/80 border-none">
+            <CardContent className="pt-6 space-y-4">
+              <div className="flex gap-2 items-center">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search entries by keyword..."
+                    value={searchKeyword}
+                    onChange={(e) => setSearchKeyword(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setShowFilters(!showFilters)}
+                >
+                  <Filter className="h-4 w-4" />
+                </Button>
+              </div>
+
+              {showFilters && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Filter by Mood</label>
+                    <Select value={filterMood} onValueChange={setFilterMood}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Moods</SelectItem>
+                        <SelectItem value="happy">😊 Happy</SelectItem>
+                        <SelectItem value="sad">😔 Sad</SelectItem>
+                        <SelectItem value="calm">😌 Calm</SelectItem>
+                        <SelectItem value="anxious">😰 Anxious</SelectItem>
+                        <SelectItem value="angry">😡 Angry</SelectItem>
+                        <SelectItem value="grateful">🤗 Grateful</SelectItem>
+                        <SelectItem value="tired">😴 Tired</SelectItem>
+                        <SelectItem value="excited">🤩 Excited</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Filter by Emotion Tag</label>
+                    <Select value={filterTag} onValueChange={setFilterTag}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Tags</SelectItem>
+                        <SelectItem value="Joy">Joy</SelectItem>
+                        <SelectItem value="Peace">Peace</SelectItem>
+                        <SelectItem value="Love">Love</SelectItem>
+                        <SelectItem value="Gratitude">Gratitude</SelectItem>
+                        <SelectItem value="Sadness">Sadness</SelectItem>
+                        <SelectItem value="Anxiety">Anxiety</SelectItem>
+                        <SelectItem value="Fear">Fear</SelectItem>
+                        <SelectItem value="Anger">Anger</SelectItem>
+                        <SelectItem value="Loneliness">Loneliness</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              )}
+
+              {(searchKeyword || filterMood !== "all" || filterTag !== "all") && (
+                <div className="flex gap-2 flex-wrap">
+                  {searchKeyword && (
+                    <Badge variant="secondary" className="gap-1">
+                      Keyword: {searchKeyword}
+                    </Badge>
+                  )}
+                  {filterMood !== "all" && (
+                    <Badge variant="secondary" className="gap-1">
+                      Mood: {filterMood}
+                    </Badge>
+                  )}
+                  {filterTag !== "all" && (
+                    <Badge variant="secondary" className="gap-1">
+                      Tag: {filterTag}
+                    </Badge>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           <div className="space-y-4">
-            <h2 className="text-2xl font-playfair font-semibold">Recent Entries</h2>
+            <h2 className="text-2xl font-playfair font-semibold">
+              {searchKeyword || filterMood !== "all" || filterTag !== "all" ? "Filtered Entries" : "Recent Entries"}
+            </h2>
             {loading ? (
               <div className="text-center py-8">
                 <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
