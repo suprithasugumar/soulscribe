@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, LogOut, Sparkles, TrendingUp, Settings } from "lucide-react";
+import { Plus, LogOut, Sparkles, TrendingUp, Settings, Mic } from "lucide-react";
 import { toast } from "sonner";
 import { AuthGuard } from "@/components/AuthGuard";
 import { GratitudeFlashback } from "@/components/GratitudeFlashback";
@@ -113,6 +113,14 @@ const Home = () => {
               >
                 <Plus className="mr-2 h-4 w-4" />
                 New Entry
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => navigate("/voice-journal")}
+                className="flex-1 transition-all hover:scale-105"
+              >
+                <Mic className="mr-2 h-4 w-4" />
+                Voice Journal
               </Button>
               <Button
                 variant="outline"

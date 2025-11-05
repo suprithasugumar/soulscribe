@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft } from "lucide-react";
+import { PasswordChangeForm } from "@/components/PasswordChangeForm";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -286,6 +287,16 @@ const Settings = () => {
                 }
               />
             </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Change Password</CardTitle>
+            <CardDescription>Update your account password</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <PasswordChangeForm />
           </CardContent>
         </Card>
 
