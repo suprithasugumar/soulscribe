@@ -10,7 +10,6 @@ import { toast } from "sonner";
 import { AuthGuard } from "@/components/AuthGuard";
 import { MoodSelector } from "@/components/MoodSelector";
 import { EmotionTags } from "@/components/EmotionTags";
-import { VoiceRecorder } from "@/components/VoiceRecorder";
 import { MediaUploader } from "@/components/MediaUploader";
 import { TextEnhancer } from "@/components/TextEnhancer";
 import { DoodleGenerator } from "@/components/DoodleGenerator";
@@ -146,16 +145,13 @@ const NewEntry = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <div className="flex gap-2 items-start">
-                    <Textarea
-                      placeholder={t.contentPlaceholder}
-                      value={content}
-                      onChange={(e) => setContent(e.target.value)}
-                      maxLength={50000}
-                      className="min-h-[300px] resize-none border-none focus-visible:ring-0 px-0 font-inter"
-                    />
-                    <VoiceRecorder onTranscription={handleTranscription} />
-                  </div>
+                  <Textarea
+                    placeholder={t.contentPlaceholder}
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    maxLength={50000}
+                    className="min-h-[300px] resize-none border-none focus-visible:ring-0 px-0 font-inter"
+                  />
                   <div className="text-sm text-muted-foreground text-right">
                     {content.length.toLocaleString()} / 50,000 {t.characterCount}
                   </div>

@@ -289,39 +289,6 @@ const Settings = () => {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Language</CardTitle>
-            <CardDescription>Choose your preferred language</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Select
-              value={settings.language_preference}
-              onValueChange={(value) => setSettings({ ...settings, language_preference: value })}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="en">English</SelectItem>
-                <SelectItem value="hi">हिन्दी (Hindi)</SelectItem>
-                <SelectItem value="ta">தமிழ் (Tamil)</SelectItem>
-                <SelectItem value="te">తెలుగు (Telugu)</SelectItem>
-                <SelectItem value="mr">मराठी (Marathi)</SelectItem>
-                <SelectItem value="bn">বাংলা (Bengali)</SelectItem>
-                <SelectItem value="gu">ગુજરાતી (Gujarati)</SelectItem>
-                <SelectItem value="kn">ಕನ್ನಡ (Kannada)</SelectItem>
-                <SelectItem value="ml">മലയാളം (Malayalam)</SelectItem>
-                <SelectItem value="pa">ਪੰਜਾਬੀ (Punjabi)</SelectItem>
-                <SelectItem value="es">Español</SelectItem>
-                <SelectItem value="fr">Français</SelectItem>
-                <SelectItem value="de">Deutsch</SelectItem>
-                <SelectItem value="zh">中文</SelectItem>
-              </SelectContent>
-            </Select>
-          </CardContent>
-        </Card>
-
         <div className="flex gap-4">
           <Button onClick={saveSettings} disabled={loading} className="flex-1">
             {loading ? "Saving..." : "Save Settings"}
