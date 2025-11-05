@@ -4,7 +4,7 @@ import { Language, getTranslation, Translations } from '@/lib/i18n';
 
 export const useLanguage = () => {
   const [language, setLanguage] = useState<Language>('en');
-  const [t, setT] = useState<Translations>(getTranslation('en'));
+  const [t, setT] = useState<Translations>(() => getTranslation('en'));
 
   useEffect(() => {
     const loadLanguage = async () => {

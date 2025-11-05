@@ -33,6 +33,12 @@ const NewEntry = () => {
   const [showReflection, setShowReflection] = useState(false);
   const [voiceNoteUrl, setVoiceNoteUrl] = useState("");
 
+  // Ensure t is always defined
+  if (!t) {
+    console.error('Translation object is undefined');
+    return null;
+  }
+
   useEffect(() => {
     fetchDailyPrompt();
   }, []);
@@ -66,8 +72,10 @@ const NewEntry = () => {
   };
 
   const handleTranscriptionComplete = (transcription: string, audioUrl: string) => {
-    setContent((prev) => (prev ? `${prev}\n\n${transcription}` : transcription));
-    setVoiceNoteUrl(audioUrl);
+    const validTranscription = transcription || "";
+    const validAudioUrl = audioUrl || "";
+    setContent((prev) => (prev ? `${prev}\n\n${validTranscription}` : validTranscription));
+    setVoiceNoteUrl(validAudioUrl);
   };
 
   const handleSave = async () => {
@@ -157,13 +165,13 @@ const NewEntry = () => {
                 <div className="space-y-2">
                   <Textarea
                     placeholder={t?.contentPlaceholder || "What's on your mind today?"}
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
+                    value={content || ""}
+                    onChange={(e) => setContent(e.target.value || "")}
                     maxLength={50000}
                     className="min-h-[300px] resize-none border-none focus-visible:ring-0 px-0 font-inter"
                   />
                   <div className="text-sm text-muted-foreground text-right">
-                    {content.length.toLocaleString()} / 50,000 {t?.characterCount || 'characters'}
+                    {(content || "").length.toLocaleString()} / 50,000 {t?.characterCount || 'characters'}
                   </div>
                   <div className="flex gap-2 flex-wrap">
                     <TextEnhancer text={content} onTextEnhanced={setContent} />

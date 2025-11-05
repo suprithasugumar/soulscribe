@@ -98,7 +98,8 @@ export const VoiceJournalRecorder = ({ onTranscriptionComplete }: VoiceJournalRe
           description: "Your voice entry has been transcribed!",
         });
 
-        onTranscriptionComplete(data.text, publicUrl);
+        const transcriptionText = data?.text || "";
+        onTranscriptionComplete(transcriptionText, publicUrl);
       };
     } catch (error) {
       console.error("Error processing recording:", error);
