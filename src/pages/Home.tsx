@@ -7,6 +7,7 @@ import { Plus, LogOut, Sparkles, TrendingUp, Settings, Search, Filter, BarChart3
 import { toast } from "sonner";
 import { AuthGuard } from "@/components/AuthGuard";
 import { GratitudeFlashback } from "@/components/GratitudeFlashback";
+import { AppLogo } from "@/components/AppLogo";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
@@ -103,9 +104,7 @@ const Home = () => {
       <div className="min-h-screen bg-gradient-to-br from-background via-muted to-accent/20">
         <div className="container mx-auto px-4 py-8">
           <header className="flex justify-between items-center mb-8">
-            <h1 className="text-4xl font-playfair font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              SoulScribe
-            </h1>
+            <AppLogo />
             <div className="flex gap-2">
               <Button
                 variant="outline"
