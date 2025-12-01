@@ -17,6 +17,7 @@ import { AIReflection } from "@/components/AIReflection";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/hooks/useLanguage";
+import { TemplateSelector, TemplateType } from "@/components/EntryTemplate";
 
 const NewEntry = () => {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ const NewEntry = () => {
   const [mediaUrls, setMediaUrls] = useState<string[]>([]);
   const [isPrivate, setIsPrivate] = useState(false);
   const [showReflection, setShowReflection] = useState(false);
+  const [template, setTemplate] = useState<TemplateType>("minimal");
 
   // Ensure t is always defined
   if (!t) {
@@ -84,6 +86,7 @@ const NewEntry = () => {
         emotion_tags: emotionTags,
         media_urls: mediaUrls,
         is_private: isPrivate,
+        template: template,
       });
 
       if (error) throw error;
@@ -167,6 +170,12 @@ const NewEntry = () => {
             <Card className="shadow-medium backdrop-blur-sm bg-card/80 border-none">
               <CardContent className="pt-6">
                 <MoodSelector selectedMood={mood} onMoodSelect={setMood} />
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-medium backdrop-blur-sm bg-card/80 border-none">
+              <CardContent className="pt-6 space-y-4">
+                <TemplateSelector selected={template} onSelect={setTemplate} />
               </CardContent>
             </Card>
 

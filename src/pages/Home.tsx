@@ -11,6 +11,7 @@ import { AppLogo } from "@/components/AppLogo";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { JournalBookView } from "@/components/JournalBookView";
 
 interface JournalEntry {
   id: string;
@@ -29,6 +30,7 @@ const Home = () => {
   const [filterMood, setFilterMood] = useState<string>("all");
   const [filterTag, setFilterTag] = useState<string>("all");
   const [showFilters, setShowFilters] = useState(false);
+  const [showJournalBook, setShowJournalBook] = useState(false);
 
   useEffect(() => {
     fetchEntries();
@@ -99,6 +101,10 @@ const Home = () => {
     return moodMap[mood || ""] || "📝";
   };
 
+  if (showJournalBook) {
+    return <JournalBookView onClose={() => setShowJournalBook(false)} />;
+  }
+
   return (
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-background via-muted to-accent/20">
@@ -159,10 +165,17 @@ const Home = () => {
               <Button
                 variant="outline"
                 onClick={() => navigate("/ai-features")}
-                className="flex-1 transition-all hover:scale-105"
+                className="transition-all hover:scale-105"
               >
                 <Sparkles className="mr-2 h-4 w-4" />
                 AI Features
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setShowJournalBook(true)}
+                className="transition-all hover:scale-105"
+              >
+                📖 Journal Book
               </Button>
             </CardContent>
           </Card>
