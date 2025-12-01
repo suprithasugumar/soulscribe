@@ -181,4 +181,8 @@ All colors MUST be HSL.
   html.font-handwriting {
     font-family: 'Kalam', 'Comic Sans MS', cursive;
   }
+
+  .font-handwriting {
+    font-family: 'Kalam', 'Comic Sans MS', cursive;
+  }
 }

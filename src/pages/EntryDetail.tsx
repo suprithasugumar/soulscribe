@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ArrowLeft, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { AuthGuard } from "@/components/AuthGuard";
+import { EntryTemplate, TemplateType } from "@/components/EntryTemplate";
 
 interface JournalEntry {
   id: string;
@@ -16,6 +17,7 @@ interface JournalEntry {
   created_at: string;
   is_private: boolean;
   media_urls?: string[];
+  template?: string;
 }
 
 const EntryDetail = () => {
@@ -89,57 +91,60 @@ const EntryDetail = () => {
             </Button>
           </div>
 
-          <Card className="shadow-medium backdrop-blur-sm bg-card/80 border-none">
-            <CardHeader>
-              <CardTitle className="text-2xl font-playfair">
-                {entry.title || "Untitled Entry"}
-              </CardTitle>
-              <CardDescription className="font-inter">
-                {new Date(entry.created_at).toLocaleDateString("en-US", {
-                  weekday: "long",
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-                {entry.mood && (
-                  <span className="ml-2">
-                    • Mood: <span className="capitalize">{entry.mood}</span>
-                  </span>
-                )}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="prose prose-lg max-w-none font-inter">
-                <p className="whitespace-pre-wrap">{entry.content}</p>
-              </div>
-
-              {entry.emotion_tags && entry.emotion_tags.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {entry.emotion_tags.map((tag, i) => (
-                    <span
-                      key={i}
-                      className="px-3 py-1 rounded-full bg-primary/10 text-primary font-inter text-sm"
-                    >
-                      {tag}
+          <EntryTemplate template={(entry.template as TemplateType) || "minimal"} className="shadow-medium backdrop-blur-sm">
+            <Card className="bg-transparent border-none shadow-none">
+              <CardHeader>
+                <CardTitle className="text-2xl font-playfair">
+                  {entry.title || "Untitled Entry"}
+                </CardTitle>
+                <CardDescription className="font-inter">
+                  {new Date(entry.created_at).toLocaleDateString("en-US", {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                  {entry.mood && (
+                    <span className="ml-2">
+                      • Mood: <span className="capitalize">{entry.mood}</span>
                     </span>
-                  ))}
+                  )}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="prose prose-lg max-w-none font-inter">
+                  <p className="whitespace-pre-wrap">{entry.content}</p>
                 </div>
-              )}
 
-              {entry.media_urls && entry.media_urls.length > 0 && (
-                <div className="grid grid-cols-2 gap-4 mt-4">
-                  {entry.media_urls.map((url, i) => (
-                    <img
-                      key={i}
-                      src={url}
-                      alt={`Media ${i + 1}`}
-                      className="rounded-lg shadow-soft w-full h-auto"
-                    />
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                {entry.emotion_tags && entry.emotion_tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {entry.emotion_tags.map((tag, i) => (
+                      <span
+                        key={i}
+                        className="px-3 py-1 rounded-full bg-primary/10 text-primary font-inter text-sm"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {entry.media_urls && entry.media_urls.length > 0 && (
+                  <div className="grid grid-cols-2 gap-4 mt-4">
+                    {entry.media_urls.map((url, i) => (
+                      <img
+                        key={i}
+                        src={url}
+                        alt={`Media ${i + 1}`}
+                        className="rounded-lg shadow-soft w-full h-auto"
+                        loading="lazy"
+                      />
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </EntryTemplate>
         </div>
       </div>
     </AuthGuard>

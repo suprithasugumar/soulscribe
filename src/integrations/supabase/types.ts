@@ -75,6 +75,7 @@ export type Database = {
           is_private: boolean | null
           media_urls: string[] | null
           mood: string | null
+          template: string | null
           title: string | null
           updated_at: string
           user_id: string
@@ -89,6 +90,7 @@ export type Database = {
           is_private?: boolean | null
           media_urls?: string[] | null
           mood?: string | null
+          template?: string | null
           title?: string | null
           updated_at?: string
           user_id: string
@@ -103,6 +105,7 @@ export type Database = {
           is_private?: boolean | null
           media_urls?: string[] | null
           mood?: string | null
+          template?: string | null
           title?: string | null
           updated_at?: string
           user_id?: string
