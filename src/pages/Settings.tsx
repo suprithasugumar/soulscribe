@@ -11,8 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { 
   ArrowLeft, ChevronDown, Palette, Shield, Bell, Database, 
-  Bookmark, User, Info, Download, Upload, Trash2, HelpCircle,
-  FileText, LogOut, Eye, EyeOff
+  User, Info, Download, HelpCircle, FileText, LogOut, Eye, EyeOff
 } from "lucide-react";
 import { PasswordChangeForm } from "@/components/PasswordChangeForm";
 import { SecurityQuestionSetup } from "@/components/SecurityQuestionSetup";
@@ -355,19 +354,6 @@ const Settings = () => {
           </div>
         </SettingsSection>
 
-        {/* 6. Data & Storage */}
-        <SettingsSection title="Data & Storage" icon={<Trash2 className="h-5 w-5" />}>
-          <div className="space-y-3 pt-4">
-            <p className="text-sm text-muted-foreground">Manage your data and storage preferences.</p>
-          </div>
-        </SettingsSection>
-
-        {/* 7. Tags & Organization */}
-        <SettingsSection title="Tags & Organization" icon={<Bookmark className="h-5 w-5" />}>
-          <div className="space-y-3 pt-4">
-            <p className="text-sm text-muted-foreground">Manage tags and categories for better organization.</p>
-          </div>
-        </SettingsSection>
 
         {/* 8. Account Settings */}
         <SettingsSection title="Account Settings" icon={<User className="h-5 w-5" />}>
