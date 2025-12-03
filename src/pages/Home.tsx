@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, LogOut, Sparkles, TrendingUp, Settings, Search, Filter, BarChart3 } from "lucide-react";
+import { Plus, LogOut, Sparkles, TrendingUp, Settings, Search, Filter, BarChart3, Calendar } from "lucide-react";
 import { toast } from "sonner";
 import { AuthGuard } from "@/components/AuthGuard";
 import { GratitudeFlashback } from "@/components/GratitudeFlashback";
@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { JournalBookView } from "@/components/JournalBookView";
+import { MemoryTimeline } from "@/components/MemoryTimeline";
 
 interface JournalEntry {
   id: string;
@@ -31,6 +32,7 @@ const Home = () => {
   const [filterTag, setFilterTag] = useState<string>("all");
   const [showFilters, setShowFilters] = useState(false);
   const [showJournalBook, setShowJournalBook] = useState(false);
+  const [showMemoryTimeline, setShowMemoryTimeline] = useState(false);
 
   useEffect(() => {
     fetchEntries();
@@ -105,6 +107,10 @@ const Home = () => {
     return <JournalBookView onClose={() => setShowJournalBook(false)} />;
   }
 
+  if (showMemoryTimeline) {
+    return <MemoryTimeline onClose={() => setShowMemoryTimeline(false)} />;
+  }
+
   return (
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-background via-muted to-accent/20">
@@ -176,6 +182,13 @@ const Home = () => {
                 className="transition-all hover:scale-105"
               >
                 📖 Journal Book
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setShowMemoryTimeline(true)}
+                className="transition-all hover:scale-105"
+              >
+                🗓️ Timeline
               </Button>
             </CardContent>
           </Card>
