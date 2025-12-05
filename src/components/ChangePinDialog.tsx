@@ -26,12 +26,13 @@ const hashString = async (str: string): Promise<string> => {
 
 export const ChangePinDialog = () => {
   const [open, setOpen] = useState(false);
-  const [step, setStep] = useState<"verify" | "newpin">("verify");
+  const [step, setStep] = useState<"verify" | "newpin" | "forgot">("verify");
   const [securityAnswer, setSecurityAnswer] = useState("");
   const [newPin, setNewPin] = useState("");
   const [confirmPin, setConfirmPin] = useState("");
   const [loading, setLoading] = useState(false);
   const [securityQuestion, setSecurityQuestion] = useState("");
+  const [confirmDelete, setConfirmDelete] = useState("");
   const { toast } = useToast();
 
   const loadSecurityQuestion = async () => {
@@ -122,6 +123,62 @@ export const ChangePinDialog = () => {
     }
   };
 
+  const handleForgotAnswer = async () => {
+    if (confirmDelete !== "DELETE") {
+      toast({
+        title: "Confirmation Required",
+        description: "Please type DELETE to confirm.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Delete all private entries
+      const { error: deleteError } = await supabase
+        .from("journal_entries")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("is_private", true);
+
+      if (deleteError) throw deleteError;
+
+      // Clear security question and PIN
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({ 
+          lock_pin_hash: null,
+          lock_pin: null,
+          security_question: null,
+          security_answer_hash: null,
+          secret_lock_enabled: false
+        })
+        .eq("id", user.id);
+
+      if (updateError) throw updateError;
+
+      toast({
+        title: "Reset Complete",
+        description: "All secret entries have been deleted. You can set up a new secret lock in settings.",
+      });
+      setOpen(false);
+      resetState();
+    } catch (error) {
+      console.error("Error resetting:", error);
+      toast({
+        title: "Error",
+        description: "Failed to reset secret lock.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleChangePin = async () => {
     if (newPin.length !== 4 || !/^\d{4}$/.test(newPin)) {
       toast({
@@ -163,10 +220,7 @@ export const ChangePinDialog = () => {
         description: "Your secret lock PIN has been successfully changed.",
       });
       setOpen(false);
-      setSecurityAnswer("");
-      setNewPin("");
-      setConfirmPin("");
-      setStep("verify");
+      resetState();
     } catch (error) {
       console.error("Error changing PIN:", error);
       toast({
@@ -179,15 +233,20 @@ export const ChangePinDialog = () => {
     }
   };
 
+  const resetState = () => {
+    setSecurityAnswer("");
+    setNewPin("");
+    setConfirmPin("");
+    setConfirmDelete("");
+    setStep("verify");
+  };
+
   return (
     <Dialog open={open} onOpenChange={(isOpen) => {
       setOpen(isOpen);
       if (isOpen) {
         loadSecurityQuestion();
-        setStep("verify");
-        setSecurityAnswer("");
-        setNewPin("");
-        setConfirmPin("");
+        resetState();
       }
     }}>
       <DialogTrigger asChild>
@@ -198,10 +257,14 @@ export const ChangePinDialog = () => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Change Secret Lock PIN</DialogTitle>
+          <DialogTitle>
+            {step === "forgot" ? "Reset Secret Lock" : "Change Secret Lock PIN"}
+          </DialogTitle>
           <DialogDescription>
             {step === "verify" 
               ? "Answer your security question to proceed" 
+              : step === "forgot"
+              ? "This will permanently delete all secret entries"
               : "Enter your new 4-digit PIN"}
           </DialogDescription>
         </DialogHeader>
@@ -228,6 +291,33 @@ export const ChangePinDialog = () => {
                 placeholder="Enter your answer"
                 value={securityAnswer}
                 onChange={(e) => setSecurityAnswer(e.target.value)}
+              />
+            </div>
+            <Button 
+              variant="link" 
+              className="p-0 h-auto text-destructive"
+              onClick={() => setStep("forgot")}
+            >
+              Forgot your answer?
+            </Button>
+          </div>
+        ) : step === "forgot" ? (
+          <div className="space-y-4">
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                <strong>Warning:</strong> This action will permanently delete ALL your secret entries and reset your secret lock. This cannot be undone.
+              </AlertDescription>
+            </Alert>
+            <div className="space-y-2">
+              <Label htmlFor="confirm-delete">Type DELETE to confirm</Label>
+              <Input
+                id="confirm-delete"
+                type="text"
+                placeholder="Type DELETE"
+                value={confirmDelete}
+                onChange={(e) => setConfirmDelete(e.target.value)}
+                className="uppercase"
               />
             </div>
           </div>
@@ -260,16 +350,17 @@ export const ChangePinDialog = () => {
           </div>
         )}
 
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>
-            Cancel
+        <DialogFooter className="flex-col sm:flex-row gap-2">
+          <Button variant="outline" onClick={() => step === "forgot" ? setStep("verify") : setOpen(false)}>
+            {step === "forgot" ? "Back" : "Cancel"}
           </Button>
           <Button 
-            onClick={step === "verify" ? handleVerifyAnswer : handleChangePin}
-            disabled={loading || (step === "verify" ? !securityAnswer : newPin.length !== 4)}
+            onClick={step === "verify" ? handleVerifyAnswer : step === "forgot" ? handleForgotAnswer : handleChangePin}
+            disabled={loading || (step === "verify" ? !securityAnswer : step === "forgot" ? confirmDelete !== "DELETE" : newPin.length !== 4)}
+            variant={step === "forgot" ? "destructive" : "default"}
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {step === "verify" ? "Verify" : "Change PIN"}
+            {step === "verify" ? "Verify" : step === "forgot" ? "Delete & Reset" : "Change PIN"}
           </Button>
         </DialogFooter>
       </DialogContent>
