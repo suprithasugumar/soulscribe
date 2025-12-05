@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import {
 import { PasswordChangeForm } from "@/components/PasswordChangeForm";
 import { SecurityQuestionSetup } from "@/components/SecurityQuestionSetup";
 import { ChangePinDialog } from "@/components/ChangePinDialog";
+import { HelpFAQ } from "@/components/HelpFAQ";
 
 interface SettingsSectionProps {
   title: string;
@@ -370,14 +371,18 @@ const Settings = () => {
 
         {/* 9. App Information */}
         <SettingsSection title="App Information & Support" icon={<Info className="h-5 w-5" />}>
-          <div className="space-y-3 pt-4">
+          <div className="space-y-4 pt-4">
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Version</span>
               <span>1.0.0</span>
             </div>
-            <Button variant="outline" className="w-full justify-start gap-2">
-              <HelpCircle className="h-4 w-4" /> Help & FAQs
-            </Button>
+            <div className="border-t pt-4">
+              <div className="flex items-center gap-2 mb-3">
+                <HelpCircle className="h-4 w-4 text-primary" />
+                <span className="font-medium text-sm">Help & FAQs</span>
+              </div>
+              <HelpFAQ />
+            </div>
           </div>
         </SettingsSection>
 

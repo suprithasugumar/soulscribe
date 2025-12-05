@@ -3,21 +3,30 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserSettings } from "./hooks/useUserSettings";
 import { FutureMessageNotifier } from "./components/FutureMessageNotifier";
-import Index from "./pages/Index";
+
+// Eagerly load critical pages
 import Auth from "./pages/Auth";
 import Home from "./pages/Home";
-import NewEntry from "./pages/NewEntry";
-import EntryDetail from "./pages/EntryDetail";
-import AIFeatures from "./pages/AIFeatures";
-import Statistics from "./pages/Statistics";
-import MoodTracker from "./pages/MoodTracker";
-import Settings from "./pages/Settings";
-import SecretEntries from "./pages/SecretEntries";
-import NotFound from "./pages/NotFound";
+
+// Lazy load non-critical pages for faster initial load
+const NewEntry = lazy(() => import("./pages/NewEntry"));
+const EntryDetail = lazy(() => import("./pages/EntryDetail"));
+const AIFeatures = lazy(() => import("./pages/AIFeatures"));
+const Statistics = lazy(() => import("./pages/Statistics"));
+const MoodTracker = lazy(() => import("./pages/MoodTracker"));
+const Settings = lazy(() => import("./pages/Settings"));
+const SecretEntries = lazy(() => import("./pages/SecretEntries"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+  </div>
+);
 
 const queryClient = new QueryClient();
 
@@ -60,18 +69,20 @@ const App = () => {
         <Sonner />
         {session && <FutureMessageNotifier />}
         <BrowserRouter>
-          <Routes>
-            <Route path="/auth" element={!session ? <Auth /> : <Navigate to="/" />} />
-            <Route path="/" element={session ? <Home /> : <Navigate to="/auth" />} />
-            <Route path="/new-entry" element={<NewEntry />} />
-            <Route path="/entry/:id" element={<EntryDetail />} />
-        <Route path="/ai-features" element={<AIFeatures />} />
-            <Route path="/mood-tracker" element={<MoodTracker />} />
-            <Route path="/statistics" element={<Statistics />} />
-            <Route path="/settings" element={session ? <Settings /> : <Navigate to="/auth" />} />
-            <Route path="/secret-entries" element={session ? <SecretEntries /> : <Navigate to="/auth" />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route path="/auth" element={!session ? <Auth /> : <Navigate to="/" />} />
+              <Route path="/" element={session ? <Home /> : <Navigate to="/auth" />} />
+              <Route path="/new-entry" element={<NewEntry />} />
+              <Route path="/entry/:id" element={<EntryDetail />} />
+              <Route path="/ai-features" element={<AIFeatures />} />
+              <Route path="/mood-tracker" element={<MoodTracker />} />
+              <Route path="/statistics" element={<Statistics />} />
+              <Route path="/settings" element={session ? <Settings /> : <Navigate to="/auth" />} />
+              <Route path="/secret-entries" element={session ? <SecretEntries /> : <Navigate to="/auth" />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
