@@ -8,6 +8,8 @@ import { ArrowLeft, Lock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { AuthGuard } from "@/components/AuthGuard";
 
+const PIN_SESSION_KEY = 'pin_verified_until';
+
 const SecretEntries = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -15,6 +17,17 @@ const SecretEntries = () => {
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [entries, setEntries] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
+  const [attemptsRemaining, setAttemptsRemaining] = useState<number | null>(null);
+
+  useEffect(() => {
+    // Check if already unlocked from a valid session
+    const sessionExpiry = localStorage.getItem(PIN_SESSION_KEY);
+    if (sessionExpiry && Date.now() < parseInt(sessionExpiry, 10)) {
+      setIsUnlocked(true);
+      loadSecretEntries();
+    }
+  }, []);
 
   const verifyPin = async () => {
     try {
@@ -46,17 +59,57 @@ const SecretEntries = () => {
         }
       });
 
-      if (error || !data?.success) {
+      if (error) {
         toast({
-          title: "Wrong PIN",
-          description: "Please try again.",
+          title: "Error",
+          description: "Failed to verify PIN.",
           variant: "destructive",
         });
         setPin("");
         return;
       }
 
+      // Handle rate limiting
+      if (data?.locked) {
+        setIsLocked(true);
+        toast({
+          title: "Account Locked",
+          description: data.error || "Too many failed attempts. Please try again later.",
+          variant: "destructive",
+        });
+        setPin("");
+        return;
+      }
+
+      // Handle wrong PIN with attempts remaining
+      if (data?.attemptsRemaining !== undefined) {
+        setAttemptsRemaining(data.attemptsRemaining);
+        toast({
+          title: "Wrong PIN",
+          description: data.error || `${data.attemptsRemaining} attempt(s) remaining.`,
+          variant: "destructive",
+        });
+        setPin("");
+        return;
+      }
+
+      if (!data?.success) {
+        toast({
+          title: "Wrong PIN",
+          description: data?.error || "Please try again.",
+          variant: "destructive",
+        });
+        setPin("");
+        return;
+      }
+
+      // Store PIN session expiry in localStorage
+      if (data.expiresAt) {
+        localStorage.setItem(PIN_SESSION_KEY, data.expiresAt.toString());
+      }
+
       setIsUnlocked(true);
+      setAttemptsRemaining(null);
       loadSecretEntries();
       toast({
         title: "Unlocked!",
@@ -101,7 +154,7 @@ const SecretEntries = () => {
 
   const handlePinSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (pin.length === 4) {
+    if (pin.length === 4 && !isLocked) {
       verifyPin();
     }
   };
@@ -134,8 +187,23 @@ const SecretEntries = () => {
                     value={pin}
                     onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
                     className="text-center text-2xl tracking-widest"
+                    disabled={isLocked}
                   />
-                  <Button type="submit" className="w-full" disabled={pin.length !== 4}>
+                  {attemptsRemaining !== null && attemptsRemaining > 0 && (
+                    <p className="text-sm text-destructive text-center">
+                      {attemptsRemaining} attempt(s) remaining
+                    </p>
+                  )}
+                  {isLocked && (
+                    <p className="text-sm text-destructive text-center">
+                      Account temporarily locked. Please try again later.
+                    </p>
+                  )}
+                  <Button 
+                    type="submit" 
+                    className="w-full" 
+                    disabled={pin.length !== 4 || isLocked}
+                  >
                     Unlock
                   </Button>
                 </form>

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { ArrowLeft, Trash2, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { AuthGuard } from "@/components/AuthGuard";
 import { EntryTemplate, TemplateType } from "@/components/EntryTemplate";
@@ -20,11 +20,20 @@ interface JournalEntry {
   template?: string;
 }
 
+const PIN_SESSION_KEY = 'pin_verified_until';
+
+const isPinSessionValid = (): boolean => {
+  const sessionExpiry = localStorage.getItem(PIN_SESSION_KEY);
+  if (!sessionExpiry) return false;
+  return Date.now() < parseInt(sessionExpiry, 10);
+};
+
 const EntryDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [entry, setEntry] = useState<JournalEntry | null>(null);
   const [loading, setLoading] = useState(true);
+  const [requiresPinVerification, setRequiresPinVerification] = useState(false);
 
   useEffect(() => {
     fetchEntry();
@@ -39,8 +48,16 @@ const EntryDetail = () => {
         .single();
 
       if (error) throw error;
-      setEntry(data);
-    } catch (error: any) {
+      
+      // Check if entry is private and requires PIN verification
+      if (data.is_private && !isPinSessionValid()) {
+        setRequiresPinVerification(true);
+        setEntry(null);
+      } else {
+        setEntry(data);
+        setRequiresPinVerification(false);
+      }
+    } catch (error: unknown) {
       toast.error("Failed to load entry");
       navigate("/");
     } finally {
@@ -60,7 +77,7 @@ const EntryDetail = () => {
       if (error) throw error;
       toast.success("Entry deleted successfully");
       navigate("/");
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error("Failed to delete entry");
     }
   };
@@ -73,6 +90,37 @@ const EntryDetail = () => {
           <p className="text-muted-foreground font-inter">Loading entry...</p>
         </div>
       </div>
+    );
+  }
+
+  // Show PIN required message for private entries
+  if (requiresPinVerification) {
+    return (
+      <AuthGuard>
+        <div className="min-h-screen bg-gradient-to-br from-background via-muted to-accent/20 p-4">
+          <div className="max-w-md mx-auto mt-20">
+            <Card className="text-center">
+              <CardHeader>
+                <div className="mx-auto mb-4 w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+                  <Lock className="h-8 w-8 text-primary" />
+                </div>
+                <CardTitle>Private Entry</CardTitle>
+                <CardDescription>
+                  This entry is protected. Please verify your PIN to access it.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Button onClick={() => navigate("/secret-entries")} className="w-full">
+                  Go to Secret Entries
+                </Button>
+                <Button variant="outline" onClick={() => navigate("/")} className="w-full">
+                  Back to Home
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </AuthGuard>
     );
   }
 

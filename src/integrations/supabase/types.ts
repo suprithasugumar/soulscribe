@@ -123,6 +123,8 @@ export type Database = {
           lock_pin: string | null
           lock_pin_hash: string | null
           notifications_enabled: boolean | null
+          pin_failed_attempts: number | null
+          pin_locked_until: string | null
           secret_lock_enabled: boolean | null
           security_answer_hash: string | null
           security_question: string | null
@@ -139,6 +141,8 @@ export type Database = {
           lock_pin?: string | null
           lock_pin_hash?: string | null
           notifications_enabled?: boolean | null
+          pin_failed_attempts?: number | null
+          pin_locked_until?: string | null
           secret_lock_enabled?: boolean | null
           security_answer_hash?: string | null
           security_question?: string | null
@@ -155,6 +159,8 @@ export type Database = {
           lock_pin?: string | null
           lock_pin_hash?: string | null
           notifications_enabled?: boolean | null
+          pin_failed_attempts?: number | null
+          pin_locked_until?: string | null
           secret_lock_enabled?: boolean | null
           security_answer_hash?: string | null
           security_question?: string | null
