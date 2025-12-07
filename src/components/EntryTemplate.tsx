@@ -15,7 +15,7 @@ export const EntryTemplate = ({ template, children, className }: EntryTemplatePr
     classic: "bg-card border-2 border-primary/50 shadow-medium ring-1 ring-primary/20",
     scrapbook: "bg-gradient-to-br from-pink-100/40 via-card to-purple-100/40 dark:from-pink-900/20 dark:to-purple-900/20 border-4 border-dashed border-primary/40 shadow-lg rotate-[-1deg] transform",
     vintage: "bg-gradient-to-b from-amber-50 to-orange-50 dark:from-amber-950/50 dark:to-orange-950/30 border-8 border-double border-amber-600/50 dark:border-amber-500/40 shadow-xl sepia-[0.15]",
-    handwritten: "bg-[repeating-linear-gradient(transparent,transparent_31px,hsl(var(--primary)/0.15)_31px,hsl(var(--primary)/0.15)_32px)] bg-card border-l-4 border-red-400/60 shadow-soft pl-8 ml-4",
+    handwritten: "bg-[repeating-linear-gradient(transparent,transparent_31px,hsl(var(--primary)/0.15)_31px,hsl(var(--primary)/0.15)_32px)] bg-card border-l-4 border-red-400/60 shadow-soft pl-8 ml-4 font-handwriting text-lg",
     polaroid: "bg-white dark:bg-slate-100 p-6 pb-16 shadow-[0_8px_30px_rgba(0,0,0,0.2)] rotate-[2deg] hover:rotate-0 transition-all duration-300 dark:text-slate-900",
   };
 
