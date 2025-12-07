@@ -12,11 +12,11 @@ interface EntryTemplateProps {
 export const EntryTemplate = ({ template, children, className }: EntryTemplateProps) => {
   const templates = {
     minimal: "bg-card border-none shadow-soft",
-    classic: "bg-card border-2 border-border shadow-medium",
-    scrapbook: "bg-gradient-to-br from-secondary/20 via-card to-accent/20 border-4 border-dashed border-primary/30 shadow-medium rotate-[-0.5deg]",
-    vintage: "bg-[linear-gradient(to_bottom,hsl(var(--card)),hsl(var(--muted)))] border-8 border-double border-primary/40 shadow-glow",
-    handwritten: "bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDIwIDAgTCAwIDAgMCAyMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJoc2woMjYyIDgzJSA1OCUgLyAwLjA1KSIgc3Ryb2tlLXdpZHRoPSIwLjUiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] bg-card border border-primary/20 shadow-soft",
-    polaroid: "bg-white dark:bg-card p-4 pb-12 shadow-[0_4px_20px_rgba(0,0,0,0.1)] rotate-[1deg] hover:rotate-0 transition-transform",
+    classic: "bg-card border-2 border-primary/50 shadow-medium ring-1 ring-primary/20",
+    scrapbook: "bg-gradient-to-br from-pink-100/40 via-card to-purple-100/40 dark:from-pink-900/20 dark:to-purple-900/20 border-4 border-dashed border-primary/40 shadow-lg rotate-[-1deg] transform",
+    vintage: "bg-gradient-to-b from-amber-50 to-orange-50 dark:from-amber-950/50 dark:to-orange-950/30 border-8 border-double border-amber-600/50 dark:border-amber-500/40 shadow-xl sepia-[0.15]",
+    handwritten: "bg-[repeating-linear-gradient(transparent,transparent_31px,hsl(var(--primary)/0.15)_31px,hsl(var(--primary)/0.15)_32px)] bg-card border-l-4 border-red-400/60 shadow-soft pl-8 ml-4",
+    polaroid: "bg-white dark:bg-slate-100 p-6 pb-16 shadow-[0_8px_30px_rgba(0,0,0,0.2)] rotate-[2deg] hover:rotate-0 transition-all duration-300 dark:text-slate-900",
   };
 
   return (
