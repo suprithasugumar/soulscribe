@@ -1,1 +1,25 @@
 project_id = "cownjkcmzseyddqejiim"
+
+[functions.ai-reflection]
+verify_jwt = false
+
+[functions.enhance-text]
+verify_jwt = false
+
+[functions.generate-doodle]
+verify_jwt = false
+
+[functions.generate-story]
+verify_jwt = false
+
+[functions.suggest-music]
+verify_jwt = false
+
+[functions.voice-to-text]
+verify_jwt = false
+
+[functions.verify-pin]
+verify_jwt = false
+
+[functions.verify-security-answer]
+verify_jwt = false

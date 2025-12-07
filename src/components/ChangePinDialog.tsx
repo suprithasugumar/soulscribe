@@ -73,27 +73,25 @@ export const ChangePinDialog = () => {
 
     setLoading(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast({
+          title: "Not Authenticated",
+          description: "Please log in again.",
+          variant: "destructive",
+        });
+        return;
+      }
 
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("security_answer_hash")
-        .eq("id", user.id)
-        .single();
+      // Verify security answer server-side
+      const { data, error } = await supabase.functions.invoke("verify-security-answer", {
+        body: { answer: securityAnswer, deleteOnFailure: true },
+      });
 
-      const answerHash = await hashString(securityAnswer);
+      if (error) throw error;
 
-      if (answerHash !== profile?.security_answer_hash) {
-        // Wrong answer - delete all private entries
-        const { error: deleteError } = await supabase
-          .from("journal_entries")
-          .delete()
-          .eq("user_id", user.id)
-          .eq("is_private", true);
-
-        if (deleteError) throw deleteError;
-
+      if (!data.success) {
+        // Wrong answer - entries were deleted server-side
         toast({
           title: "Wrong Answer - Data Deleted",
           description: "Incorrect security answer. All secret entries have been permanently deleted for security.",

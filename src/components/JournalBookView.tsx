@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Download } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { createSignedUrls } from "@/lib/storage-utils";
 
 interface JournalEntry {
   id: string;
@@ -24,6 +25,7 @@ export const JournalBookView = ({ onClose }: JournalBookViewProps) => {
   const [weekEntries, setWeekEntries] = useState<JournalEntry[]>([]);
   const [monthEntries, setMonthEntries] = useState<JournalEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [signedMediaUrls, setSignedMediaUrls] = useState<Record<string, string[]>>({});
 
   useEffect(() => {
     fetchEntries();
@@ -52,6 +54,18 @@ export const JournalBookView = ({ onClose }: JournalBookViewProps) => {
 
       setWeekEntries(weekData || []);
       setMonthEntries(monthData || []);
+      
+      // Create signed URLs for all media
+      const allEntries = [...(weekData || []), ...(monthData || [])];
+      const signedUrls: Record<string, string[]> = {};
+      
+      for (const entry of allEntries) {
+        if (entry.media_urls && entry.media_urls.length > 0) {
+          const urls = await createSignedUrls(entry.media_urls.slice(0, 3));
+          signedUrls[entry.id] = urls;
+        }
+      }
+      setSignedMediaUrls(signedUrls);
     } catch (error) {
       toast.error("Failed to load journal entries");
       console.error(error);
@@ -138,9 +152,9 @@ export const JournalBookView = ({ onClose }: JournalBookViewProps) => {
               </div>
 
               {/* Media gallery with polaroid style */}
-              {entry.media_urls && entry.media_urls.length > 0 && (
+              {signedMediaUrls[entry.id] && signedMediaUrls[entry.id].length > 0 && (
                 <div className="flex flex-wrap gap-4 mt-6">
-                  {entry.media_urls.slice(0, 3).map((url, i) => (
+                  {signedMediaUrls[entry.id].map((url, i) => (
                     <div
                       key={i}
                       className="bg-white dark:bg-card p-2 pb-8 shadow-[0_4px_20px_rgba(0,0,0,0.1)] transform hover:scale-110 transition-all"
