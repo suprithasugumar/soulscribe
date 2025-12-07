@@ -17,7 +17,7 @@ import { AIReflection } from "@/components/AIReflection";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/hooks/useLanguage";
-import { TemplateSelector, TemplateType } from "@/components/EntryTemplate";
+import { TemplateSelector, TemplateType, EntryTemplate } from "@/components/EntryTemplate";
 
 const NewEntry = () => {
   const navigate = useNavigate();
@@ -138,16 +138,14 @@ const NewEntry = () => {
           )}
 
           <div className="space-y-6">
-            <Card className="shadow-medium backdrop-blur-sm bg-card/80 border-none">
-              <CardContent className="pt-6 space-y-4">
-                <div>
-                  <Input
-                    placeholder={t?.titlePlaceholder || 'Give your entry a title (optional)'}
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    className="text-xl font-playfair border-none focus-visible:ring-0 px-0"
-                  />
-                </div>
+            <EntryTemplate template={template} className="rounded-xl p-6">
+              <div className="space-y-4">
+                <Input
+                  placeholder={t?.titlePlaceholder || 'Give your entry a title (optional)'}
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="text-xl font-playfair border-none focus-visible:ring-0 px-0 bg-transparent"
+                />
                 
                 <div className="space-y-2">
                   <Textarea
@@ -155,7 +153,7 @@ const NewEntry = () => {
                     value={content || ""}
                     onChange={(e) => setContent(e.target.value || "")}
                     maxLength={50000}
-                    className="min-h-[300px] resize-none border-none focus-visible:ring-0 px-0 font-inter"
+                    className="min-h-[300px] resize-none border-none focus-visible:ring-0 px-0 font-inter bg-transparent"
                   />
                   <div className="text-sm text-muted-foreground text-right">
                     {(content || "").length.toLocaleString()} / 50,000 {t?.characterCount || 'characters'}
@@ -164,8 +162,8 @@ const NewEntry = () => {
                     <TextEnhancer text={content} onTextEnhanced={setContent} />
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </EntryTemplate>
 
             <Card className="shadow-medium backdrop-blur-sm bg-card/80 border-none">
               <CardContent className="pt-6">
