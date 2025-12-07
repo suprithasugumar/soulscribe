@@ -63,11 +63,14 @@ export const AudioRecorder = ({ onAudioUploaded }: AudioRecorderProps) => {
 
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage
+      // Create a signed URL instead of public URL (bucket is now private)
+      const { data: signedData, error: signedError } = await supabase.storage
         .from("voice-notes")
-        .getPublicUrl(fileName);
+        .createSignedUrl(fileName, 3600);
 
-      onAudioUploaded(publicUrl);
+      if (signedError) throw signedError;
+
+      onAudioUploaded(signedData.signedUrl);
       toast.success("Voice note recorded!");
     } catch (error: any) {
       toast.error("Failed to save voice note");

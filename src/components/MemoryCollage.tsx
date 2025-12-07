@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Sparkles, Loader2, Download, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { toast as sonnerToast } from "sonner";
+import { createSignedUrl } from "@/lib/storage-utils";
 
 export const MemoryCollage = () => {
   const [loading, setLoading] = useState(false);
@@ -38,20 +39,21 @@ export const MemoryCollage = () => {
         return;
       }
 
-      // Collect all media from happy entries
+      // Collect all media from happy entries and create signed URLs
       const allMedia: any[] = [];
-      entries.forEach(entry => {
+      for (const entry of entries) {
         if (entry.media_urls && entry.media_urls.length > 0) {
-          entry.media_urls.forEach((url: string) => {
+          for (const url of entry.media_urls) {
+            const signedUrl = await createSignedUrl(url);
             allMedia.push({
-              url,
+              url: signedUrl,
               content: entry.content.substring(0, 100),
               mood: entry.mood,
               date: entry.created_at
             });
-          });
+          }
         }
-      });
+      }
 
       if (allMedia.length === 0) {
         toast({

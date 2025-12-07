@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { X, Calendar, Image as ImageIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { createSignedUrl } from "@/lib/storage-utils";
 
 interface TimelineEntry {
   id: string;
@@ -44,6 +45,7 @@ interface MemoryTimelineProps {
 export const MemoryTimeline = ({ onClose }: MemoryTimelineProps) => {
   const [entries, setEntries] = useState<TimelineEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [signedMediaUrls, setSignedMediaUrls] = useState<Record<string, string>>({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -65,6 +67,16 @@ export const MemoryTimeline = ({ onClose }: MemoryTimelineProps) => {
 
       if (error) throw error;
       setEntries(data || []);
+      
+      // Create signed URLs for all media
+      const signedUrls: Record<string, string> = {};
+      for (const entry of data || []) {
+        if (entry.media_urls && entry.media_urls.length > 0) {
+          const firstMediaUrl = entry.media_urls[0];
+          signedUrls[firstMediaUrl] = await createSignedUrl(firstMediaUrl);
+        }
+      }
+      setSignedMediaUrls(signedUrls);
     } catch (error) {
       console.error("Error fetching entries:", error);
     } finally {
@@ -146,7 +158,7 @@ export const MemoryTimeline = ({ onClose }: MemoryTimelineProps) => {
                             {entry.media_urls && entry.media_urls.length > 0 && (
                               <div className="flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden bg-muted">
                                 <img
-                                  src={entry.media_urls[0]}
+                                  src={signedMediaUrls[entry.media_urls[0]] || entry.media_urls[0]}
                                   alt="Entry media"
                                   className="w-full h-full object-cover"
                                 />

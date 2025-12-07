@@ -29,17 +29,20 @@ export const MediaUploader = ({ onMediaUploaded, currentUrls }: MediaUploaderPro
         const fileName = `${user.id}/${Math.random()}.${fileExt}`;
         const bucket = type === 'image' ? 'journal-images' : 'journal-videos';
 
-        const { error: uploadError, data } = await supabase.storage
+        const { error: uploadError } = await supabase.storage
           .from(bucket)
           .upload(fileName, file);
 
         if (uploadError) throw uploadError;
 
-        const { data: { publicUrl } } = supabase.storage
+        // Create a signed URL instead of public URL (buckets are now private)
+        const { data: signedData, error: signedError } = await supabase.storage
           .from(bucket)
-          .getPublicUrl(fileName);
+          .createSignedUrl(fileName, 3600);
 
-        return publicUrl;
+        if (signedError) throw signedError;
+
+        return signedData.signedUrl;
       });
 
       const newUrls = await Promise.all(uploadPromises);

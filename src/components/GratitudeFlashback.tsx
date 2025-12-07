@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Heart, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSignedUrls, useSignedUrl } from "@/hooks/useSignedUrls";
 
 interface Entry {
   id: string;
@@ -17,6 +18,10 @@ interface Entry {
 export const GratitudeFlashback = () => {
   const [entry, setEntry] = useState<Entry | null>(null);
   const [show, setShow] = useState(false);
+  
+  // Use signed URLs for secure media access
+  const { signedUrls: mediaUrls } = useSignedUrls(entry?.media_urls);
+  const { signedUrl: voiceNoteUrl } = useSignedUrl(entry?.voice_note_url);
 
   useEffect(() => {
     // Check if we should show a flashback (random chance, once per session)
@@ -89,11 +94,11 @@ export const GratitudeFlashback = () => {
         )}
         <p className="text-sm text-foreground/80 line-clamp-4">{entry.content}</p>
         
-        {entry.media_urls && entry.media_urls.length > 0 && (
+        {mediaUrls && mediaUrls.length > 0 && (
           <div className="grid grid-cols-2 gap-2">
-            {entry.media_urls.slice(0, 4).map((url, i) => (
+            {mediaUrls.slice(0, 4).map((url, i) => (
               <div key={i} className="aspect-square rounded-lg overflow-hidden">
-                {url.includes('.mp4') || url.includes('.webm') ? (
+                {url.includes('.mp4') || url.includes('.webm') || url.includes('journal-videos') ? (
                   <video src={url} className="w-full h-full object-cover" controls />
                 ) : (
                   <img src={url} alt="" className="w-full h-full object-cover" />
@@ -103,9 +108,9 @@ export const GratitudeFlashback = () => {
           </div>
         )}
         
-        {entry.voice_note_url && (
+        {voiceNoteUrl && (
           <audio controls className="w-full">
-            <source src={entry.voice_note_url} type="audio/webm" />
+            <source src={voiceNoteUrl} type="audio/webm" />
           </audio>
         )}
       </CardContent>

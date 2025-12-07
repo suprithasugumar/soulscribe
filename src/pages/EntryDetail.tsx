@@ -7,6 +7,7 @@ import { ArrowLeft, Trash2, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { AuthGuard } from "@/components/AuthGuard";
 import { EntryTemplate, TemplateType } from "@/components/EntryTemplate";
+import { useSignedUrls } from "@/hooks/useSignedUrls";
 
 interface JournalEntry {
   id: string;
@@ -34,6 +35,9 @@ const EntryDetail = () => {
   const [entry, setEntry] = useState<JournalEntry | null>(null);
   const [loading, setLoading] = useState(true);
   const [requiresPinVerification, setRequiresPinVerification] = useState(false);
+  
+  // Use signed URLs for secure media access
+  const { signedUrls: mediaUrls } = useSignedUrls(entry?.media_urls);
 
   useEffect(() => {
     fetchEntry();
@@ -177,9 +181,9 @@ const EntryDetail = () => {
                   </div>
                 )}
 
-                {entry.media_urls && entry.media_urls.length > 0 && (
+                {mediaUrls && mediaUrls.length > 0 && (
                   <div className="grid grid-cols-2 gap-4 mt-4">
-                    {entry.media_urls.map((url, i) => (
+                    {mediaUrls.map((url, i) => (
                       <img
                         key={i}
                         src={url}
