@@ -1,73 +1,120 @@
-# Welcome to your Lovable project
+# SoulScribe — AI-Powered Journaling App
 
-## Project info
+> Your personal space to reflect, express, and grow — powered by AI.
 
-**URL**: https://lovable.dev/projects/0d114b40-0216-48a7-8fe1-5e63d3ee927d
+SoulScribe is a full-stack AI journaling application that helps users write, reflect, and gain emotional insights from their daily entries. It works as a web app and can be installed as a native Android/iOS app via Capacitor.
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## Features
 
-**Use Lovable**
+- **AI-assisted journaling** — intelligent prompts and reflections powered by Supabase Edge Functions
+- **Mood tracking** — log and visualize emotional patterns over time
+- **Secure authentication** — user accounts with protected journal entries
+- **Rich text journaling** — smooth writing experience with animations via Framer Motion
+- **Installable PWA** — works offline and installs on Android/iOS like a native app
+- **Responsive design** — mobile-first UI with Tailwind CSS and shadcn/ui components
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/0d114b40-0216-48a7-8fe1-5e63d3ee927d) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+## Tech Stack
 
-**Use your preferred IDE**
+### Frontend
+| Technology | Purpose |
+|---|---|
+| React 18 + TypeScript | UI framework with type safety |
+| Vite | Fast build tool and dev server |
+| Tailwind CSS | Utility-first styling |
+| shadcn/ui + Radix UI | Accessible component library |
+| React Router | Client-side navigation |
+| TanStack Query | Server state and data fetching |
+| Framer Motion | Smooth page and component animations |
+| React Hook Form + Zod | Form handling and validation |
+| Lucide React | Icon library |
+| Sonner | Toast notifications |
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Backend
+| Technology | Purpose |
+|---|---|
+| Supabase | Database, auth, file storage, edge functions |
+| Supabase JS Client | Backend SDK |
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Mobile
+| Technology | Purpose |
+|---|---|
+| Capacitor | Native Android/iOS wrapper |
+| vite-plugin-pwa | Progressive Web App support |
 
-Follow these steps:
+---
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## Screenshots
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+> _Add screenshots here once deployed — home screen, journal entry screen, mood tracker_
 
-# Step 3: Install the necessary dependencies.
-npm i
+---
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+## Getting Started
+
+```bash
+# Clone the repository
+git clone https://github.com/suprithas/soulscribe.git
+cd soulscribe
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env
+# Add your Supabase project URL and anon key
+
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Environment Variables
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```env
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
-**Use GitHub Codespaces**
+---
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Project Structure
 
-## What technologies are used for this project?
+```
+soulscribe/
+├── src/
+│   ├── components/       # Reusable UI components
+│   ├── pages/            # Route-level page components
+│   ├── hooks/            # Custom React hooks
+│   ├── lib/              # Supabase client, utilities
+│   └── types/            # TypeScript type definitions
+├── public/               # Static assets
+└── capacitor.config.ts   # Mobile app configuration
+```
 
-This project is built with:
+---
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## What I Learned
 
-## How can I deploy this project?
+- Integrating Supabase for auth, database, and serverless edge functions in a single project
+- Building a PWA that installs as a native app on Android/iOS using Capacitor
+- Managing server state efficiently with TanStack Query
+- Designing accessible, animated UI using shadcn/ui and Framer Motion
+- Type-safe form validation with React Hook Form + Zod
 
-Simply open [Lovable](https://lovable.dev/projects/0d114b40-0216-48a7-8fe1-5e63d3ee927d) and click on Share -> Publish.
+---
 
-## Can I connect a custom domain to my Lovable project?
+## Built By
 
-Yes, you can!
+**Supritha S**
+M.Tech Integrated CSE (Business Analytics) — VIT Chennai
+[LinkedIn]( linkedin.com/in/supritha-s-308968300
+) · [GitHub](https://github.com/suprithasugumar)
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+---
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## License
+
+MIT
